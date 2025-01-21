@@ -6,6 +6,20 @@ frappe.ui.form.on("Patient", "onload", function(frm) {
             }
         }
     });
+	frm.set_query("hco_residence_country", function() {
+        return {
+            filters:{
+                'hco_iso_numeric_code': ['!=', '']
+            }
+        }
+    });
+	frm.set_query("hco_birth_country", function() {
+        return {
+            filters:{
+                'hco_iso_numeric_code': ['!=', '']
+            }
+        }
+    });
 });
 
 frappe.ui.form.on('Patient', 'eico_nvent_nomb_id', function(frm) {

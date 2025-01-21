@@ -39,7 +39,9 @@ app_license = "MIT"
 doctype_js = {
     "Sales Invoice" : "public/js/sales_invoice.js",
 	"Company" : "public/js/company.js",
-	"Patient" : "public/js/patient.js"
+	"Patient" : "public/js/patient.js",
+	"Patient Appointment": "public/js/patient_appointment.js",
+	"Patient Encounter": "public/js/patient_encounter.js"
 }
 
 # Home Pages
@@ -147,6 +149,10 @@ doc_events = {
 # override_whitelisted_methods = {
 # 	"frappe.desk.doctype.event.event.get_events": "healthcare_localization.event.get_events"
 # }
+override_whitelisted_methods = {
+	"erpnext.healthcare.doctype.patient_appointment.patient_appointment.make_encounter": "healthcare_localization.override.patient_appointment.make_encounter"
+}
+
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
@@ -194,6 +200,16 @@ user_data_fields = [
 fixtures = [
 	{"doctype": "qp_HCO_Operator"},
 	{"doctype": "qp_HCO_TerritorialZone"},
+	{"doctype": "qp_HCO_ServicesGroup"},
+	{"doctype": "Medical Department", "filters": [
+		[
+			"name", "in", [
+				"Nutrición",
+				"Psicología",
+				"Psiquiatría"
+			]
+		]
+	]},
 	{"doctype": "Gender", "filters": [
 		[
 			"name", "in", [
