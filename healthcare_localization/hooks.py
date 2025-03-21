@@ -41,7 +41,9 @@ doctype_js = {
 	"Company" : "public/js/company.js",
 	"Patient" : "public/js/patient.js",
 	"Patient Appointment": "public/js/patient_appointment.js",
-	"Patient Encounter": "public/js/patient_encounter.js"
+	"Patient Encounter": "public/js/patient_encounter.js",
+	"Item": "public/js/item.js",
+	"Medical Department": "public/js/medical_department.js"
 }
 
 # Home Pages

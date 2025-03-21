@@ -261,9 +261,9 @@ def get_consultas(sales_invoice):
     if not cod_prestador:
         sales_invoices_exception.cod_prestador_company_exception()
 
-    encounterpatient_doc = frappe.db.get_values("Patient", sales_invoice.patient, fieldname=["eico_nvben_tdoc", "eico_nvben_ndoc"], as_dict=1)[0]
-    print("encounterpatient_doc -->", encounterpatient_doc)
-    if not encounterpatient_doc.eico_nvben_tdoc or not encounterpatient_doc.eico_nvben_ndoc:
+    patient_doc = frappe.db.get_values("Patient", sales_invoice.patient, fieldname=["eico_nvben_tdoc", "eico_nvben_ndoc"], as_dict=1)[0]
+
+    if not patient_doc.eico_nvben_tdoc or not patient_doc.eico_nvben_ndoc:
         sales_invoices_exception.nvben_doc_patient_exception()
 
     res_consultas = []
@@ -272,17 +272,19 @@ def get_consultas(sales_invoice):
     for item in sales_invoice.items:
 
         # TODO: Determinar encuentro con el paciente de tipo consulta
-        # TODO: Verificar si proviene de cita o de encuentro con el paciente
-        if not item.get("reference_dt") == "Patient Encounter": continue
+        # Actualmente se asume que todo encuentro con el paciente/cita con encuentro con el paciente es una consulta
+        encounter_doc = None
+        reference_dt = item.get("reference_dt")
+        reference_dn = item.get("reference_dn")
+        if reference_dt in ("Patient Encounter", "Patient Appointment"):
+
+            encounter_doc = get_encounter_doc(reference_dt, reference_dn)
+
+        else:
+
+            continue
 
         indx_cons += 1
-
-        name_encounter = item.get("reference_dn")
-
-        if not name_encounter:
-            sales_invoices_exception.patient_encounter_empty_doc_exception("Patient Encounter")
-
-        encounter_doc = frappe.get_doc("Patient Encounter", name_encounter)
 
         encounter_patient_validation(encounter_doc)
 
@@ -290,9 +292,9 @@ def get_consultas(sales_invoice):
         for diag in encounter_doc.diagnosis:
             ppal_diagnosis = diag.diagnosis
             break
-        # TODO: saber donde validar
-        # if not ppal_diagnosis:
-        #     sales_invoices_exception.patient_encounter_empty_field_exception("Diagnosis")
+
+        if not ppal_diagnosis:
+            sales_invoices_exception.patient_encounter_empty_field_exception("Diagnosis")
 
         rel_diagnosis = [x.diagnosis for x in encounter_doc.hco_related_diagnosis]
 
@@ -300,8 +302,8 @@ def get_consultas(sales_invoice):
 
         inf_cons["codPrestador"] = cod_prestador
         inf_cons["fechaInicioAtencion"] = "{}".format(encounter_doc.encounter_date)
-        inf_cons["numAutorizacion"] = "--->> Por mapear, es opcional"
-        inf_cons["codConsulta"] = name_encounter
+        inf_cons["numAutorizacion"] = sales_invoice.eico_naut # TODO: Buscar donde llenar este campo automáticamente
+        inf_cons["codConsulta"] = get_codConsulta(encounter_doc.codification_table)
         inf_cons["modalidadGrupoServicioTecSal"] = encounter_doc.hco_mode or None
         inf_cons["grupoServicios"] = encounter_doc.hco_services_group or None
         inf_cons["codServicio"] = encounter_doc.hco_service_code and int(encounter_doc.hco_service_code) or 0
@@ -311,10 +313,10 @@ def get_consultas(sales_invoice):
         inf_cons["codDiagnosticoRelacionado1"] = len(rel_diagnosis) > 0 and  rel_diagnosis[0] or None
         inf_cons["codDiagnosticoRelacionado2"] = len(rel_diagnosis) > 1 and  rel_diagnosis[1] or None
         inf_cons["codDiagnosticoRelacionado3"] = len(rel_diagnosis) > 2 and  rel_diagnosis[2] or None
-        inf_cons["typoDiagnosticoPrincipal"] = "--->> Por mapear, es obligatorio"
-        inf_cons["tipoDocumentoIdentificacion"] = encounterpatient_doc.eico_nvben_tdoc or None
-        inf_cons["numDocumentoIdentificacion"] = encounterpatient_doc.eico_nvben_ndoc or None
-        inf_cons["vrServicio"] = item.net_amount # TODO: definir si es el monto total de la factura o de la línea asociada al encuentro con el paciente
+        inf_cons["typoDiagnosticoPrincipal"] = encounter_doc.hco_diagnosis_type
+        inf_cons["tipoDocumentoIdentificacion"] = patient_doc.eico_nvben_tdoc or None
+        inf_cons["numDocumentoIdentificacion"] = patient_doc.eico_nvben_ndoc or None
+        inf_cons["vrServicio"] = item.net_amount
         inf_cons["conceptoRecaudo"] = "--->> Por mapear, es obligatorio y no se encuentra en el excel"
         inf_cons["tipoPagoModerador"] = None
         inf_cons["valorPagoModerador"] = None
@@ -326,25 +328,56 @@ def get_consultas(sales_invoice):
     return res_consultas
 
 
+def get_encounter_doc(reference_dt, reference_dn):
+
+    name_encounter = reference_dn
+
+    if not reference_dn:
+        sales_invoices_exception.patient_encounter_empty_doc_exception(reference_dt)
+
+    if reference_dt == "Patient Appointment":
+
+        existing_patient_encounter = frappe.db.sql("""select name from `tabPatient Encounter`
+            where appointment = %(appointment)s
+            limit 1""", { "appointment": reference_dn})
+
+        name_encounter = existing_patient_encounter[0][0] if existing_patient_encounter else None
+
+        if not name_encounter:
+            sales_invoices_exception.patient_encounter_empty_doc_exception("Patient Encounter in Patient Appointment")
+
+    encounter_doc = frappe.get_doc("Patient Encounter", name_encounter)
+
+    return encounter_doc
+
+
+def get_codConsulta(listMedicalCoding):
+
+    return listMedicalCoding and listMedicalCoding[0].code or None
+
 def encounter_patient_validation(encounter_doc):
-    # TODO: saber donde validar
 
-    # if not encounter_doc.hco_mode:
-    #     sales_invoices_exception.patient_encounter_empty_field_exception("Mode")
+    if not encounter_doc.hco_mode:
+        sales_invoices_exception.patient_encounter_empty_field_exception("Mode")
 
-    # if not encounter_doc.hco_services_group:
-    #     sales_invoices_exception.patient_encounter_empty_field_exception("Services Group")
+    if not encounter_doc.hco_services_group:
+        sales_invoices_exception.patient_encounter_empty_field_exception("Services Group")
 
-    # if not encounter_doc.hco_service_code:
-    #     sales_invoices_exception.patient_encounter_empty_field_exception("Service Code")
+    if not encounter_doc.hco_service_code:
+        sales_invoices_exception.patient_encounter_empty_field_exception("Service Code")
 
-    # if not encounter_doc.hco_purpose_of_health_tech:
-    #     sales_invoices_exception.patient_encounter_empty_field_exception("Purpose of Health Technology")
+    if not encounter_doc.hco_purpose_of_health_tech:
+        sales_invoices_exception.patient_encounter_empty_field_exception("Purpose of Health Technology")
 
-    # if not encounter_doc.hco_cause_of_attention:
-    #     sales_invoices_exception.patient_encounter_empty_field_exception("Cause That Motivates Attention")
+    if not encounter_doc.hco_cause_of_attention:
+        sales_invoices_exception.patient_encounter_empty_field_exception("Cause That Motivates Attention")
 
-    pass
+    if not encounter_doc.codification_table:
+        sales_invoices_exception.patient_encounter_empty_field_exception("Medical Coding")
+
+    if not encounter_doc.hco_diagnosis_type:
+        sales_invoices_exception.patient_encounter_empty_field_exception("Diagnosis Type")
+
 
 def get_medicamentos(sales_invoice):
     res_medicamentos = []

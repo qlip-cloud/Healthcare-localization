@@ -1,3 +1,71 @@
+frappe.ui.form.on("Patient Encounter", "onload", function(frm) {
+    // Tablas maestros
+    frm.set_query("hco_diagnosis_type", function() {
+        return {
+            filters:{
+                'enabled': ['=', '1']
+            }
+        }
+    });
+    frm.set_query("hco_technology_in_health", function() {
+        return {
+            filters:{
+                'enabled': ['=', '1']
+            }
+        }
+    });
+    frm.set_query("hco_services_group", function() {
+        return {
+            filters:{
+                'enabled': ['=', '1']
+            }
+        }
+    });
+    frm.set_query("hco_service_code", function() {
+        return {
+            filters:{
+                'enabled': ['=', '1']
+            }
+        }
+    });
+	frm.set_query("hco_purpose_of_health_tech", function() {
+        return {
+            filters:{
+                'enabled': ['=', '1']
+            }
+        }
+    });
+	frm.set_query("hco_pharmaceutical_form", function() {
+        return {
+            filters:{
+                'enabled': ['=', '1']
+            }
+        }
+    });
+	frm.set_query("hco_mode", function() {
+        return {
+            filters:{
+                'enabled': ['=', '1']
+            }
+        }
+    });
+	frm.set_query("hco_entry_route", function() {
+        return {
+            filters:{
+                'enabled': ['=', '1']
+            }
+        }
+    });
+	frm.set_query("hco_cause_of_attention", function() {
+        return {
+            filters:{
+                'enabled': ['=', '1']
+            }
+        }
+    });
+});
+
+// Información del Departamento
 frappe.ui.form.on('Patient Encounter', {
 	medical_department: function(frm) {
 		frm.events.set_medical_department_fields(frm);
