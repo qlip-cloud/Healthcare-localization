@@ -63,8 +63,10 @@ def handle(sales_invoice):
 
     #     __assert_has_other_services_info(sales_invoice)
 
-    print("transaction_node", transaction_node)
+    # print("transaction_node", transaction_node)
     print("res json -->>", json.dumps(transaction_node))
+
+    frappe.log_error(message=json.dumps(transaction_node), title="JSON Validate RIPS")
 
     return json.dumps(transaction_node)
 
@@ -213,7 +215,7 @@ def get_incapacidad(si_items):
 
         break
 
-    return incap_paciente.upper(), name_encounter
+    return incap_paciente.upper()
 
 
 def get_servicios(sales_invoice):
@@ -251,7 +253,6 @@ def get_consultas(sales_invoice):
     numDocumentoIdentificacion
     vrServicio
     conceptoRecaudo
-    tipoPagoModerador
     valorPagoModerador
     numFEVPagoModerador
     consecutivo
@@ -302,7 +303,7 @@ def get_consultas(sales_invoice):
 
         inf_cons["codPrestador"] = cod_prestador
         inf_cons["fechaInicioAtencion"] = "{}".format(encounter_doc.encounter_date)
-        inf_cons["numAutorizacion"] = sales_invoice.eico_naut # TODO: Buscar donde llenar este campo automáticamente
+        inf_cons["numAutorizacion"] = encounter_doc.hco_authorization_number
         inf_cons["codConsulta"] = get_codConsulta(encounter_doc.codification_table)
         inf_cons["modalidadGrupoServicioTecSal"] = encounter_doc.hco_mode or None
         inf_cons["grupoServicios"] = encounter_doc.hco_services_group or None
@@ -317,9 +318,13 @@ def get_consultas(sales_invoice):
         inf_cons["tipoDocumentoIdentificacion"] = patient_doc.eico_nvben_tdoc or None
         inf_cons["numDocumentoIdentificacion"] = patient_doc.eico_nvben_ndoc or None
         inf_cons["vrServicio"] = item.net_amount
-        inf_cons["conceptoRecaudo"] = "--->> Por mapear, es obligatorio y no se encuentra en el excel"
-        inf_cons["tipoPagoModerador"] = None
-        inf_cons["valorPagoModerador"] = None
+        # conceptoRecaudo es obligatorio en la Documentación y no se encuentra en el excel
+        # 02:Cuota moderadora
+        # 03:Pagos compartidos en planes voluntarios de salud
+        # 05:No aplica
+        inf_cons["conceptoRecaudo"] =  "05"
+        # inf_cons["tipoPagoModerador"] = None # No aparece en la Documentación, es posible que sea conceptoRecaudo
+        inf_cons["valorPagoModerador"] = 0
         inf_cons["numFEVPagoModerador"] = None
         inf_cons["consecutivo"] = indx_cons
 

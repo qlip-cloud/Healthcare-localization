@@ -1,0 +1,44 @@
+[
+ {
+  "board": null,
+  "code": "344",
+  "description": null,
+  "docstatus": 0,
+  "doctype": "qp_HCO_ServiceCode",
+  "enabled": 1,
+  "modified": "2025-04-02 13:13:32.252438",
+  "name": "344",
+  "noun": "Psicolog\u00eda",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "board": null,
+  "code": "345",
+  "description": null,
+  "docstatus": 0,
+  "doctype": "qp_HCO_ServiceCode",
+  "enabled": 1,
+  "modified": "2025-04-02 13:13:43.887279",
+  "name": "345",
+  "noun": "Psiquiatr\u00eda",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "board": null,
+  "code": "333",
+  "description": null,
+  "docstatus": 0,
+  "doctype": "qp_HCO_ServiceCode",
+  "enabled": 1,
+  "modified": "2025-04-02 13:14:06.517786",
+  "name": "333",
+  "noun": "Nutrici\u00f3n",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ }
+]

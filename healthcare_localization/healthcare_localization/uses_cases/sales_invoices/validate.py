@@ -20,7 +20,7 @@ def validate_rips(si_doc):
         # Si ya está validada y si está activa factura rips
         # Si no está la factura validada por el ministerio aún
         if not get_is_not_electronic_invoice_resolution(sales_invoices) and \
-            sales_invoice.docstatus == 1 and sales_invoices.hco_rips and \
+            sales_invoices.docstatus == 1 and sales_invoices.hco_rips and \
             not sales_invoices.hco_validated:
             # TODO: Programar lógica
             msg = _("Completed")

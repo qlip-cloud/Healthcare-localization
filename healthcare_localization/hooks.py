@@ -203,6 +203,7 @@ fixtures = [
 	{"doctype": "qp_HCO_Operator"},
 	{"doctype": "qp_HCO_TerritorialZone"},
 	{"doctype": "qp_HCO_ServicesGroup"},
+	{"doctype": "qp_HCO_ServiceCode"},
 	{"doctype": "Medical Department", "filters": [
 		[
 			"name", "in", [
