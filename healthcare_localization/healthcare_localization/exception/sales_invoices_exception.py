@@ -35,3 +35,23 @@ def hco_iso_residence_country_exception():
 def hco_iso_birth_country_exception():
 
 	throw(_("ISO numeric code in Birth Country not found"))
+
+def patient_encounter_empty_doc_exception(field_param):
+
+	throw("{} {}".format(_(field_param), _("in Invoice not found")))
+
+def cod_prestador_company_exception():
+
+	throw(_("Provider code in Company not found"))
+
+def ppal_diagnosis_patient_encounter_exception():
+
+	throw(_("Primary diagnosis in Patient Encounter not found"))
+
+def nvben_doc_patient_exception():
+
+	throw(_("Identification document in Patient not found"))
+
+def patient_encounter_empty_field_exception(field_param):
+
+	throw("{} {}".format(_(field_param), _("in Patient Encounter not found")))

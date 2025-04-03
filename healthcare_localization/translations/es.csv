@@ -61,3 +61,10 @@ ISO numeric code in Birth Country not found,Código ISO en País de Origen no en
 Other Masters,Otros Maestros
 Environment,Entorno
 Register Patient,Registrar Paciente
+in Invoice not found,en Factura no encontrado
+Provider code in Company not found,Código prestador en Compañía no enconrtado
+in Patient Encounter not found,en el encuentro con el paciente no encontrado
+Identification document in Patient not found,Documento de identificación del paciente no encontrado
+Diagnosis Type,Tipo de Diagnóstico
+Patient Encounter in Patient Appointment,Encuentro con el paciente en la cita médica
+Authorization Number,Número de Autorización

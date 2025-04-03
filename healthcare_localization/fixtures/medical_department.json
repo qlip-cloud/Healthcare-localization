@@ -1,0 +1,35 @@
+[
+ {
+  "department": "Nutrici\u00f3n",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "hco_service_code": "333",
+  "modified": "2025-01-17 16:14:02.226770",
+  "name": "Nutrici\u00f3n",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "department": "Psicolog\u00eda",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "hco_service_code": "344",
+  "modified": "2025-01-17 16:14:27.843607",
+  "name": "Psicolog\u00eda",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "department": "Psiquiatr\u00eda",
+  "docstatus": 0,
+  "doctype": "Medical Department",
+  "hco_service_code": "345",
+  "modified": "2025-01-17 16:14:19.806116",
+  "name": "Psiquiatr\u00eda",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ }
+]
