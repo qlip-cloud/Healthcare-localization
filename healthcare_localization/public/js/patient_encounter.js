@@ -74,16 +74,18 @@ frappe.ui.form.on('Patient Encounter', {
 	set_medical_department_fields: function(frm) {
 		if (frm.doc.medical_department) {
 			frappe.call({
-				method: 'healthcare_localization.healthcare_localization.utils.get_info.get_fields_from_department',
+				method: 'frappe.client.get',
 				args: {
-					medical_department: frm.doc.medical_department
+					doctype: 'Medical Department',
+					name: frm.doc.medical_department
 				},
 				callback: function(data) {
-                    if (data.message) {
+                    if (data.message && data.message.hco_service_code) {
                         let values = {
-                            'hco_service_code':data.message[0]
+                            'hco_service_code':data.message.hco_service_code
                         };
                         frm.set_value(values);
+                        frm.refresh_field("hco_service_code");
                     }
 				}
 			});
@@ -93,6 +95,46 @@ frappe.ui.form.on('Patient Encounter', {
 				'hco_service_code': ''
 			};
 			frm.set_value(values);
+            frm.refresh_field("hco_service_code");
+		}
+	},
+});
+
+
+// TODO: Pendiente ajustar llenado de tabla y probar
+// Información del Código Médico en Cita con el Paciente
+frappe.ui.form.on('Patient Encounter', {
+	appointment: function(frm) {
+		frm.events.set_appointment_medical_code_fields(frm);
+	},
+
+	set_appointment_medical_code_fields: function(frm) {
+		if (frm.doc.appointment) {
+			frappe.call({
+                method: 'frappe.client.get',
+				args: {
+					doctype: 'Patient Appointment',
+					name: frm.doc.appointment
+				},
+                callback: function(r) {
+                    if (r.message && r.message.hco_medical_code) {
+
+                        frm.doc.codification_table = [];
+                        
+                        let entry = frm.add_child("codification_table");
+                        
+                        entry.medical_code = r.message.hco_medical_code;
+
+                        frm.refresh_field("codification_table");
+
+                    }
+
+                }
+            });
+		}
+		else {
+			frm.doc.codification_table = [];
+            frm.refresh_field("codification_table");
 		}
 	},
 });

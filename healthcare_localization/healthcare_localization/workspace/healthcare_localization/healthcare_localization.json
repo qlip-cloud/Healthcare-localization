@@ -173,9 +173,44 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Basics",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Level of Education",
+   "link_to": "qp_HCO_level_of_education",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Biological Sex",
+   "link_to": "qp_HCO_biological_sex",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Ethnicity",
+   "link_to": "qp_HCO_ethnicity",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2025-04-14 12:26:56.899455",
+ "modified": "2025-04-15 08:53:41.202579",
  "modified_by": "Administrator",
  "module": "Healthcare Localization",
  "name": "Healthcare Localization",

@@ -20,25 +20,6 @@ def get_fields_from_patient_appointment(patient_appointment_name):
 	return res
 
 @frappe.whitelist()
-def get_fields_from_department(medical_department):
-	# Returns hco_service_code from department
-
-	res = frappe.db.sql(
-		"""
-			SELECT
-				dep.hco_service_code
-			FROM
-				`tabMedical Department` dep
-			WHERE
-				dep.name=%(medical_department)s
-			LIMIT 1
-		""", {'medical_department': medical_department}
-	)
-
-
-	return res
-
-@frappe.whitelist()
 def get_pathological_history(history_type):
 	# Returns details of pathological_history
 
