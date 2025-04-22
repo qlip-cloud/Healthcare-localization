@@ -51,6 +51,25 @@ frappe.ui.form.on("Patient", "onload", function(frm) {
     });
 });
 
+// Información de Municipalidad según Departamento
+frappe.ui.form.on('Patient', 'hco_residence_department', function(frm) {
+	if (frm.doc.hco_residence_department) {
+
+        cur_frm.fields_dict['hco_residence_municipality'].get_query = function(doc) {
+			return {
+				filters: {
+					"state_code": cur_frm.doc.hco_residence_department
+				}
+			}
+		}
+
+	}
+	else {
+		frappe.model.set_value(frm.doctype,frm.docname, 'hco_residence_municipality', '');
+        frm.refresh_field("hco_residence_municipality");
+	}
+});
+
 // Información de Entidad/País de la Entidad
 frappe.ui.form.on('Patient', 'eico_nvent_nomb_id', function(frm) {
 	if (frm.doc.eico_nvent_nomb_id) {

@@ -27,8 +27,6 @@ def make_encounter(source_name, target_doc=None):
 
     hco_medical_code = frappe.get_value('Patient Appointment', source_name, 'hco_medical_code')
 
-    print("hco_medical_code  -->>", hco_medical_code)
-
     if hco_medical_code:
 
         doc.append("codification_table", {
