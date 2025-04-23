@@ -63,6 +63,33 @@ frappe.ui.form.on("Patient Encounter", "onload", function(frm) {
             }
         }
     });
+
+    // Información de datos por defecto de la configuración
+
+    frappe.db.get_single_value("qp_HCO_healthcare_localization_settings", "services_group_set").then(services_group_set => {
+        if (services_group_set) {
+            frappe.model.set_value(frm.doctype, frm.docname, 'hco_services_group', services_group_set);
+        }
+    });
+
+    frappe.db.get_single_value("qp_HCO_healthcare_localization_settings", "cause_of_attention_set").then(cause_of_attention_set => {
+        if (cause_of_attention_set) {
+            frappe.model.set_value(frm.doctype, frm.docname, 'hco_cause_of_attention', cause_of_attention_set);
+        }
+    });
+
+    frappe.db.get_single_value("qp_HCO_healthcare_localization_settings", "mode_set").then(mode_set => {
+        if (mode_set) {
+            frappe.model.set_value(frm.doctype, frm.docname, 'hco_mode', mode_set);
+        }
+    });
+
+    frappe.db.get_single_value("qp_HCO_healthcare_localization_settings", "purpose_of_health_tec_set").then(purpose_of_health_tec_set => {
+        if (purpose_of_health_tec_set) {
+            frappe.model.set_value(frm.doctype, frm.docname, 'hco_purpose_of_health_tech', purpose_of_health_tec_set);
+        }
+    });
+
 });
 
 // Información del Departamento
@@ -101,7 +128,6 @@ frappe.ui.form.on('Patient Encounter', {
 });
 
 
-// TODO: Pendiente ajustar llenado de tabla y probar
 // Información del Código Médico en Cita con el Paciente
 frappe.ui.form.on('Patient Encounter', {
 	appointment: function(frm) {

@@ -185,6 +185,15 @@
   {
    "hidden": 0,
    "is_query_report": 0,
+   "label": "Healthcare Localization Settings",
+   "link_to": "qp_HCO_healthcare_localization_settings",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Level of Education",
    "link_to": "qp_HCO_level_of_education",
    "link_type": "DocType",
@@ -208,9 +217,27 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Scope of disability",
+   "link_to": "qp_HCO_Scope_of_disability",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Retroactive disability",
+   "link_to": "qp_HCO_retroactive_disability",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2025-04-15 08:53:41.202579",
+ "modified": "2025-04-23 15:32:51.398723",
  "modified_by": "Administrator",
  "module": "Healthcare Localization",
  "name": "Healthcare Localization",
