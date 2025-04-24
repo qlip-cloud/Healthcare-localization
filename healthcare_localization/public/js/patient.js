@@ -51,6 +51,25 @@ frappe.ui.form.on("Patient", "onload", function(frm) {
     });
 });
 
+// Información de Municipalidad según Departamento
+frappe.ui.form.on('Patient', 'hco_residence_department', function(frm) {
+	if (frm.doc.hco_residence_department) {
+
+        cur_frm.fields_dict['hco_residence_municipality'].get_query = function(doc) {
+			return {
+				filters: {
+					"state_code": cur_frm.doc.hco_residence_department
+				}
+			}
+		}
+
+	}
+	else {
+		frappe.model.set_value(frm.doctype,frm.docname, 'hco_residence_municipality', '');
+        frm.refresh_field("hco_residence_municipality");
+	}
+});
+
 // Información de Entidad/País de la Entidad
 frappe.ui.form.on('Patient', 'eico_nvent_nomb_id', function(frm) {
 	if (frm.doc.eico_nvent_nomb_id) {
@@ -71,5 +90,105 @@ frappe.ui.form.on('Patient', 'eico_nvent_nomb_id', function(frm) {
 	}
 	else {
 		frappe.model.set_value(frm.doctype,frm.docname, 'eico_nvent_pais', '');
+	}
+});
+
+// Historia del Paciente
+frappe.ui.form.on('Patient', 'hco_pathological_history', function(frm) {
+
+    let pat_hist = frm.doc.hco_pathological_history;
+	if (pat_hist) {
+
+        frappe.call({
+			method: "healthcare_localization.healthcare_localization.utils.get_info.get_pathological_history",
+			args: {
+				history_type: pat_hist
+			},
+			callback: function(r){
+				if(r.message){
+
+                    frm.doc.hco_pathological_history_detail = [];
+                    $.each(r.message, function(i, ph_det) {
+						let entry = frm.add_child("hco_pathological_history_detail");
+                        entry.description = ph_det.description;
+					});
+
+                    frm.refresh_field("hco_pathological_history_detail");
+
+				}
+			}
+		});
+
+	}
+	else {
+		frm.doc.hco_pathological_history_detail = [];
+        frm.refresh_field("hco_pathological_history_detail");
+	}
+});
+
+// Historia Familiar del Paciente
+frappe.ui.form.on('Patient', 'hco_op_family_history', function(frm) {
+
+    let pat_hist = frm.doc.hco_op_family_history;
+	if (pat_hist) {
+
+        frappe.call({
+			method: "healthcare_localization.healthcare_localization.utils.get_info.get_pathological_history",
+			args: {
+				history_type: pat_hist
+			},
+			callback: function(r){
+				if(r.message){
+
+                    frm.doc.hco_op_family_history_detail = [];
+                    $.each(r.message, function(i, ph_det) {
+						let entry = frm.add_child("hco_op_family_history_detail");
+                        entry.description = ph_det.description;
+					});
+
+                    frm.refresh_field("hco_op_family_history_detail");
+
+				}
+			}
+		});
+
+	}
+	else {
+		frm.doc.hco_op_family_history_detail = [];
+        frm.refresh_field("hco_op_family_history_detail");
+	}
+});
+
+
+// Historia Ginecoobstétrica del Paciente
+frappe.ui.form.on('Patient', 'hco_ob_gyn_history', function(frm) {
+
+    let pat_hist = frm.doc.hco_ob_gyn_history;
+	if (pat_hist) {
+
+        frappe.call({
+			method: "healthcare_localization.healthcare_localization.utils.get_info.get_pathological_history",
+			args: {
+				history_type: pat_hist
+			},
+			callback: function(r){
+				if(r.message){
+
+                    frm.doc.hco_ob_gyn_history_detail = [];
+                    $.each(r.message, function(i, ph_det) {
+						let entry = frm.add_child("hco_ob_gyn_history_detail");
+                        entry.description = ph_det.description;
+					});
+
+                    frm.refresh_field("hco_ob_gyn_history_detail");
+
+				}
+			}
+		});
+
+	}
+	else {
+		frm.doc.hco_ob_gyn_history_detail = [];
+        frm.refresh_field("hco_ob_gyn_history_detail");
 	}
 });

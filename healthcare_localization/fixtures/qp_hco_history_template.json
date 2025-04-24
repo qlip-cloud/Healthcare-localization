@@ -1,0 +1,444 @@
+[
+ {
+  "details": [
+   {
+    "description": "ARRITMIAS",
+    "enabled": 1,
+    "parent": "Personales Patol\u00f3gicos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "DISLIPIDEMIAS",
+    "enabled": 1,
+    "parent": "Personales Patol\u00f3gicos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "ENF. ACIDO P.",
+    "enabled": 1,
+    "parent": "Personales Patol\u00f3gicos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "ENFERMEDAD RENAL",
+    "enabled": 1,
+    "parent": "Personales Patol\u00f3gicos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "EPILEPSIA",
+    "enabled": 1,
+    "parent": "Personales Patol\u00f3gicos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "HIPERTENSION",
+    "enabled": 1,
+    "parent": "Personales Patol\u00f3gicos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "INSUFICIENCIA CARDIACA",
+    "enabled": 1,
+    "parent": "Personales Patol\u00f3gicos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "OBESIDAD",
+    "enabled": 1,
+    "parent": "Personales Patol\u00f3gicos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "QUIRURGICOS",
+    "enabled": 1,
+    "parent": "Personales Patol\u00f3gicos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "TOXICOMANIAS",
+    "enabled": 1,
+    "parent": "Personales Patol\u00f3gicos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "TRAUMATICOS",
+    "enabled": 1,
+    "parent": "Personales Patol\u00f3gicos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "DIABETES MELLITUS",
+    "enabled": 1,
+    "parent": "Personales Patol\u00f3gicos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "DISPOSITIVOS",
+    "enabled": 1,
+    "parent": "Personales Patol\u00f3gicos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "ENFERMEDAD CORONARIA",
+    "enabled": 1,
+    "parent": "Personales Patol\u00f3gicos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "ENFERMEDADES EXANTEMATICAS",
+    "enabled": 1,
+    "parent": "Personales Patol\u00f3gicos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "HEPATOPATIAS",
+    "enabled": 1,
+    "parent": "Personales Patol\u00f3gicos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "HIPOTIROIDISMO",
+    "enabled": 1,
+    "parent": "Personales Patol\u00f3gicos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "MEDICAMENTOS EN USO",
+    "enabled": 1,
+    "parent": "Personales Patol\u00f3gicos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "OTROS",
+    "enabled": 1,
+    "parent": "Personales Patol\u00f3gicos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "SINCOPE",
+    "enabled": 1,
+    "parent": "Personales Patol\u00f3gicos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "TRANSFUNCIONALES",
+    "enabled": 1,
+    "parent": "Personales Patol\u00f3gicos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   }
+  ],
+  "docstatus": 0,
+  "doctype": "qp_HCO_history_template",
+  "history_type": "Personales Patol\u00f3gicos",
+  "modified": "2025-04-14 10:14:51.266165",
+  "name": "Personales Patol\u00f3gicos",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "details": [
+   {
+    "description": "Al\u00e9rgicos",
+    "enabled": 1,
+    "parent": "Familiares",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "Cancer\u00edgenos",
+    "enabled": 1,
+    "parent": "Familiares",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "Diab\u00e9ticos",
+    "enabled": 1,
+    "parent": "Familiares",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "Epil\u00e9pticos",
+    "enabled": 1,
+    "parent": "Familiares",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "Hepatopat\u00eda",
+    "enabled": 1,
+    "parent": "Familiares",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "Malformaciones o Cong\u00e9nitas",
+    "enabled": 1,
+    "parent": "Familiares",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "Otros",
+    "enabled": 1,
+    "parent": "Familiares",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "Tuberculosis",
+    "enabled": 1,
+    "parent": "Familiares",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "Asm\u00e1ticos",
+    "enabled": 1,
+    "parent": "Familiares",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "Cardiopat\u00eda",
+    "enabled": 1,
+    "parent": "Familiares",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "Endocrinas",
+    "enabled": 1,
+    "parent": "Familiares",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "Hematol\u00f3gicos",
+    "enabled": 1,
+    "parent": "Familiares",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "Hipertensi\u00f3n",
+    "enabled": 1,
+    "parent": "Familiares",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "Nefropat\u00eda",
+    "enabled": 1,
+    "parent": "Familiares",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "Psiqui\u00e1tricos",
+    "enabled": 1,
+    "parent": "Familiares",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   }
+  ],
+  "docstatus": 0,
+  "doctype": "qp_HCO_history_template",
+  "history_type": "Familiares",
+  "modified": "2025-04-14 10:24:35.394664",
+  "name": "Familiares",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "details": [
+   {
+    "description": "Abortos",
+    "enabled": 1,
+    "parent": "Ginecoobst\u00e9tricos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "Ciclos",
+    "enabled": 1,
+    "parent": "Ginecoobst\u00e9tricos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "Fecha probable de parto",
+    "enabled": 1,
+    "parent": "Ginecoobst\u00e9tricos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "FUP (Fecha Ultimo Par)",
+    "enabled": 1,
+    "parent": "Ginecoobst\u00e9tricos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "Mamograf\u00eda",
+    "enabled": 1,
+    "parent": "Ginecoobst\u00e9tricos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "Menopausia",
+    "enabled": 1,
+    "parent": "Ginecoobst\u00e9tricos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "M\u00e9todo anticonceptivo",
+    "enabled": 1,
+    "parent": "Ginecoobst\u00e9tricos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "Nacidos Vivos",
+    "enabled": 1,
+    "parent": "Ginecoobst\u00e9tricos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "N\u00famero de Ect\u00f3picos",
+    "enabled": 1,
+    "parent": "Ginecoobst\u00e9tricos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "Partos Ces\u00e1rea",
+    "enabled": 1,
+    "parent": "Ginecoobst\u00e9tricos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "Total de Gestas",
+    "enabled": 1,
+    "parent": "Ginecoobst\u00e9tricos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "Autoexploraci\u00f3n mamaria",
+    "enabled": 1,
+    "parent": "Ginecoobst\u00e9tricos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "Edad Gestacional",
+    "enabled": 1,
+    "parent": "Ginecoobst\u00e9tricos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "Fecha Ultima Menstruaci\u00f3n",
+    "enabled": 1,
+    "parent": "Ginecoobst\u00e9tricos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "Inicio Vida Sexual Activa",
+    "enabled": 1,
+    "parent": "Ginecoobst\u00e9tricos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "Menarca",
+    "enabled": 1,
+    "parent": "Ginecoobst\u00e9tricos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "Menstruaci\u00f3n",
+    "enabled": 1,
+    "parent": "Ginecoobst\u00e9tricos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "Nacidos Muertos",
+    "enabled": 1,
+    "parent": "Ginecoobst\u00e9tricos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "No. parejas sexuales",
+    "enabled": 1,
+    "parent": "Ginecoobst\u00e9tricos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "N\u00famero Mortinatos",
+    "enabled": 1,
+    "parent": "Ginecoobst\u00e9tricos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "Partos Vaginales",
+    "enabled": 1,
+    "parent": "Ginecoobst\u00e9tricos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   },
+   {
+    "description": "\u00daltima Citolog\u00eda Vaginal",
+    "enabled": 1,
+    "parent": "Ginecoobst\u00e9tricos",
+    "parentfield": "details",
+    "parenttype": "qp_HCO_history_template"
+   }
+  ],
+  "docstatus": 0,
+  "doctype": "qp_HCO_history_template",
+  "history_type": "Ginecoobst\u00e9tricos",
+  "modified": "2025-04-14 10:40:44.192219",
+  "name": "Ginecoobst\u00e9tricos",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ }
+]

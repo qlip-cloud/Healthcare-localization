@@ -1,0 +1,94 @@
+{
+ "actions": [],
+ "creation": "2025-04-23 14:37:18.122453",
+ "description": "Healthcare Localization Settings",
+ "doctype": "DocType",
+ "document_type": "Setup",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "services_group_set",
+  "cause_of_attention_set",
+  "brk_col_set01",
+  "mode_set",
+  "purpose_of_health_tec_set"
+ ],
+ "fields": [
+  {
+   "fieldname": "services_group_set",
+   "fieldtype": "Link",
+   "label": "Services Group",
+   "options": "qp_HCO_ServicesGroup"
+  },
+  {
+   "fieldname": "cause_of_attention_set",
+   "fieldtype": "Link",
+   "label": "Cause That Motivates Attention",
+   "options": "qp_HCO_CauseThatMotivatesAttention"
+  },
+  {
+   "fieldname": "brk_col_set01",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "mode_set",
+   "fieldtype": "Link",
+   "label": "Mode",
+   "options": "qp_HCO_Mode"
+  },
+  {
+   "fieldname": "purpose_of_health_tec_set",
+   "fieldtype": "Link",
+   "label": "Purpose of Health Technology",
+   "options": "qp_HCO_PurposeOfHealthTechnology"
+  }
+ ],
+ "icon": "icon-flag",
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2025-04-23 15:14:48.072598",
+ "modified_by": "Administrator",
+ "module": "Healthcare Localization",
+ "name": "qp_HCO_healthcare_localization_settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "role": "System Manager",
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "role": "Healthcare Administrator",
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "LabTest Approver"
+  },
+  {
+   "read": 1,
+   "role": "Laboratory User"
+  },
+  {
+   "read": 1,
+   "role": "Nursing User"
+  },
+  {
+   "read": 1,
+   "role": "Physician"
+  },
+  {
+   "read": 1,
+   "role": "Patient"
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
