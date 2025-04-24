@@ -4,10 +4,9 @@ from erpnext.healthcare.doctype.patient.patient import Patient
 
 class HealthcarePatient(Patient):
 
-    def validate(self):
+    def get_patient_name(self):
 
-        patient_name_by = frappe.db.get_single_value('Healthcare Settings', 'patient_name_by')
-        if patient_name_by == 'Patient Name' and qp_field_exists("Patient", "eico_nvben_ndoc"):
+        if qp_field_exists("Patient", "eico_nvben_ndoc"):
 
             # Validar campo (exista y sea único)
             count = 0
@@ -17,12 +16,6 @@ class HealthcarePatient(Patient):
 
             if not self.eico_nvben_ndoc or count > 0:
                 frappe.throw(_("Tax ID is empty or already registered"))
-
-        super(HealthcarePatient, self).validate()
-
-    def get_patient_name(self):
-
-        if qp_field_exists("Patient", "eico_nvben_ndoc"):
 
             return self.eico_nvben_ndoc
 
