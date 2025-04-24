@@ -69,6 +69,8 @@ doctype_js = {
 # before_install = "healthcare_localization.install.before_install"
 # after_install = "healthcare_localization.install.after_install"
 
+after_migrate = "healthcare_localization.healthcare_localization.utils.add_index.add_index"
+
 # Desk Notifications
 # ------------------
 # See frappe.core.notifications.get_notification_config
@@ -204,6 +206,8 @@ fixtures = [
 	{"doctype": "qp_HCO_TerritorialZone"},
 	{"doctype": "qp_HCO_ServicesGroup"},
 	{"doctype": "qp_HCO_ServiceCode"},
+	{"doctype": "qp_HCO_history_template"},
+	{"doctype": "qp_HCO_option_list"},
 	{"doctype": "Medical Department", "filters": [
 		[
 			"name", "in", [

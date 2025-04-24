@@ -68,3 +68,24 @@ Identification document in Patient not found,Documento de identificación del pa
 Diagnosis Type,Tipo de Diagnóstico
 Patient Encounter in Patient Appointment,Encuentro con el paciente en la cita médica
 Authorization Number,Número de Autorización
+Pathological History,Personales Patológicos
+Gynecological and obstetric history,Información Ginecoobstetra
+History Template,Plantilla de Historia
+Level of Education,Nivel de Educación
+Biological Sex,Sexo Biológico
+Ethnicity,Étnia
+Ethnic Community,Comunidad Étnica
+Basics,Básicos
+"The client accepts the company's General Privacy and Data Protection Policy","El cliente acepta la Política General de Privacidad y Protección de Datos de la empresa"
+Current Illness,Enfermedad Actual
+Gender Identity,Identidad de Género
+Residence Department,Departamento de Residencia
+Disability Information,Información sobre incapacidad
+Is maternity leave,¿Es la baja por maternidad?
+Reason for disability,Motivo de la incapacidad
+Disability Origin,Origen de la incapacidad
+Scope of disability,Alcance de la incapacidad
+Retroactive disability,Incapacidad retroactiva
+Date from,Fecha de Inicio
+Date to,Fecha de Terminación
+Healthcare Localization Settings,Config. Localización Salud

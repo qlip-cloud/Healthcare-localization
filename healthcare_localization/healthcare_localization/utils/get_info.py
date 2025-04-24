@@ -20,20 +20,25 @@ def get_fields_from_patient_appointment(patient_appointment_name):
 	return res
 
 @frappe.whitelist()
-def get_fields_from_department(medical_department):
-	# Returns hco_service_code from department
+def get_pathological_history(history_type):
+	# Returns details of pathological_history
 
 	res = frappe.db.sql(
 		"""
 			SELECT
-				dep.hco_service_code
+				opt.description
 			FROM
-				`tabMedical Department` dep
+				`tabqp_HCO_option_list` opt
 			WHERE
-				dep.name=%(medical_department)s
-			LIMIT 1
-		""", {'medical_department': medical_department}
+				opt.parent=%(history_type)s
+			AND
+				opt.parenttype = 'qp_HCO_history_template'
+			AND
+				opt.parentfield = 'details'
+			AND
+				opt.enabled = 1
+			ORDER BY idx
+		""", {'history_type': history_type}, as_dict=True
 	)
-
 
 	return res

@@ -63,6 +63,33 @@ frappe.ui.form.on("Patient Encounter", "onload", function(frm) {
             }
         }
     });
+
+    // Información de datos por defecto de la configuración
+
+    frappe.db.get_single_value("qp_HCO_healthcare_localization_settings", "services_group_set").then(services_group_set => {
+        if (services_group_set) {
+            frappe.model.set_value(frm.doctype, frm.docname, 'hco_services_group', services_group_set);
+        }
+    });
+
+    frappe.db.get_single_value("qp_HCO_healthcare_localization_settings", "cause_of_attention_set").then(cause_of_attention_set => {
+        if (cause_of_attention_set) {
+            frappe.model.set_value(frm.doctype, frm.docname, 'hco_cause_of_attention', cause_of_attention_set);
+        }
+    });
+
+    frappe.db.get_single_value("qp_HCO_healthcare_localization_settings", "mode_set").then(mode_set => {
+        if (mode_set) {
+            frappe.model.set_value(frm.doctype, frm.docname, 'hco_mode', mode_set);
+        }
+    });
+
+    frappe.db.get_single_value("qp_HCO_healthcare_localization_settings", "purpose_of_health_tec_set").then(purpose_of_health_tec_set => {
+        if (purpose_of_health_tec_set) {
+            frappe.model.set_value(frm.doctype, frm.docname, 'hco_purpose_of_health_tech', purpose_of_health_tec_set);
+        }
+    });
+
 });
 
 // Información del Departamento
@@ -74,16 +101,18 @@ frappe.ui.form.on('Patient Encounter', {
 	set_medical_department_fields: function(frm) {
 		if (frm.doc.medical_department) {
 			frappe.call({
-				method: 'healthcare_localization.healthcare_localization.utils.get_info.get_fields_from_department',
+				method: 'frappe.client.get',
 				args: {
-					medical_department: frm.doc.medical_department
+					doctype: 'Medical Department',
+					name: frm.doc.medical_department
 				},
 				callback: function(data) {
-                    if (data.message) {
+                    if (data.message && data.message.hco_service_code) {
                         let values = {
-                            'hco_service_code':data.message[0]
+                            'hco_service_code':data.message.hco_service_code
                         };
                         frm.set_value(values);
+                        frm.refresh_field("hco_service_code");
                     }
 				}
 			});
@@ -93,6 +122,45 @@ frappe.ui.form.on('Patient Encounter', {
 				'hco_service_code': ''
 			};
 			frm.set_value(values);
+            frm.refresh_field("hco_service_code");
+		}
+	},
+});
+
+
+// Información del Código Médico en Cita con el Paciente
+frappe.ui.form.on('Patient Encounter', {
+	appointment: function(frm) {
+		frm.events.set_appointment_medical_code_fields(frm);
+	},
+
+	set_appointment_medical_code_fields: function(frm) {
+		if (frm.doc.appointment) {
+			frappe.call({
+                method: 'frappe.client.get',
+				args: {
+					doctype: 'Patient Appointment',
+					name: frm.doc.appointment
+				},
+                callback: function(r) {
+                    if (r.message && r.message.hco_medical_code) {
+
+                        frm.doc.codification_table = [];
+                        
+                        let entry = frm.add_child("codification_table");
+                        
+                        entry.medical_code = r.message.hco_medical_code;
+
+                        frm.refresh_field("codification_table");
+
+                    }
+
+                }
+            });
+		}
+		else {
+			frm.doc.codification_table = [];
+            frm.refresh_field("codification_table");
 		}
 	},
 });
