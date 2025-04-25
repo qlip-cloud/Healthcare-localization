@@ -71,7 +71,7 @@ Authorization Number,Número de Autorización
 Pathological History,Personales Patológicos
 Gynecological and obstetric history,Información Ginecoobstetra
 History Template,Plantilla de Historia
-Level of Education,Nivel de Educación
+Level of Education,Nivel de Escolaridad
 Biological Sex,Sexo Biológico
 Ethnicity,Étnia
 Ethnic Community,Comunidad Étnica
@@ -81,7 +81,7 @@ Current Illness,Enfermedad Actual
 Gender Identity,Identidad de Género
 Residence Department,Departamento de Residencia
 Disability Information,Información sobre incapacidad
-Is maternity leave,¿Es la baja por maternidad?
+Is maternity leave,Es licencia de maternidad?
 Reason for disability,Motivo de la incapacidad
 Disability Origin,Origen de la incapacidad
 Scope of disability,Alcance de la incapacidad
@@ -89,3 +89,6 @@ Retroactive disability,Incapacidad retroactiva
 Date from,Fecha de Inicio
 Date to,Fecha de Terminación
 Healthcare Localization Settings,Config. Localización Salud
+Coverage,Cobertura en Salud
+Coverage Description,Descripción de Cobertura en Salud
+Description scope of disability,Descripción del alcance de la incapacidad

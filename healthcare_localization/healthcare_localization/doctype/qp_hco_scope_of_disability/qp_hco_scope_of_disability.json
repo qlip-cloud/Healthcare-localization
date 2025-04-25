@@ -1,11 +1,12 @@
 {
  "actions": [],
- "autoname": "field:description",
+ "autoname": "field:code",
  "creation": "2025-04-22 10:12:02.819849",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "code",
   "description",
   "enabled"
  ],
@@ -23,11 +24,18 @@
    "fieldname": "enabled",
    "fieldtype": "Check",
    "label": "Enabled"
+  },
+  {
+   "fieldname": "code",
+   "fieldtype": "Data",
+   "label": "Code",
+   "reqd": 1,
+   "unique": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-23 15:05:27.033388",
+ "modified": "2025-04-25 13:07:55.756923",
  "modified_by": "Administrator",
  "module": "Healthcare Localization",
  "name": "qp_HCO_Scope_of_disability",

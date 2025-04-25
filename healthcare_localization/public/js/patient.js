@@ -49,6 +49,27 @@ frappe.ui.form.on("Patient", "onload", function(frm) {
             }
         }
     });
+
+	// Información de datos por defecto de la configuración
+
+	frappe.db.get_single_value("qp_HCO_healthcare_localization_settings", "pathological_history_set").then(pathological_history_set => {
+        if (pathological_history_set) {
+            frappe.model.set_value(frm.doctype, frm.docname, 'hco_pathological_history', pathological_history_set);
+        }
+    });
+
+    frappe.db.get_single_value("qp_HCO_healthcare_localization_settings", "op_family_history_set").then(op_family_history_set => {
+        if (op_family_history_set) {
+            frappe.model.set_value(frm.doctype, frm.docname, 'hco_op_family_history', op_family_history_set);
+        }
+    });
+
+    frappe.db.get_single_value("qp_HCO_healthcare_localization_settings", "ob_gyn_history_set").then(ob_gyn_history_set => {
+        if (ob_gyn_history_set) {
+            frappe.model.set_value(frm.doctype, frm.docname, 'hco_ob_gyn_history', ob_gyn_history_set);
+        }
+    });
+
 });
 
 // Información de Municipalidad según Departamento
