@@ -52,6 +52,7 @@ class HealthcarePatient(Patient):
             customer.first_name = self.first_name,
             customer.secound_name = self.middle_name,
             customer.first_surname = self.last_name,
+            customer.secound_surname = self.hco_secound_surname,
             customer.default_price_list = self.default_price_list
             customer.default_currency = self.default_currency
             customer.language = self.language
@@ -92,6 +93,7 @@ def qlip_create_customer(doc):
             "first_name": doc.first_name,
             "secound_name": doc.middle_name,
             "first_surname": doc.last_name,
+            "secound_surname": doc.hco_secound_surname,
             "customer_group": doc.customer_group or frappe.db.get_single_value("Selling Settings", "customer_group"),
             "territory" : doc.territory or frappe.db.get_single_value("Selling Settings", "territory"),
             "customer_type": "Individual",
@@ -171,6 +173,7 @@ def qlip_create_customer(doc):
                 "first_name": customer.first_name,
                 "secound_name": customer.secound_name,
                 "first_surname": customer.first_surname,
+                "secound_surname": customer.secound_surname,
                 "email": doc.get("email", None),
                 "ciiu_id": doc.eico_nvben_cciu,
                 "country": doc.hco_residence_country,
