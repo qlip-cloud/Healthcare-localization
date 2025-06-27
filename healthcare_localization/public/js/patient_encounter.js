@@ -1,64 +1,64 @@
-frappe.ui.form.on("Patient Encounter", "onload", function(frm) {
+frappe.ui.form.on("Patient Encounter", "onload", function (frm) {
     // Tablas maestros
-    frm.set_query("hco_diagnosis_type", function() {
+    frm.set_query("hco_diagnosis_type", function () {
         return {
-            filters:{
+            filters: {
                 'enabled': ['=', '1']
             }
         }
     });
-    frm.set_query("hco_technology_in_health", function() {
+    frm.set_query("hco_technology_in_health", function () {
         return {
-            filters:{
+            filters: {
                 'enabled': ['=', '1']
             }
         }
     });
-    frm.set_query("hco_services_group", function() {
+    frm.set_query("hco_services_group", function () {
         return {
-            filters:{
+            filters: {
                 'enabled': ['=', '1']
             }
         }
     });
-    frm.set_query("hco_service_code", function() {
+    frm.set_query("hco_service_code", function () {
         return {
-            filters:{
+            filters: {
                 'enabled': ['=', '1']
             }
         }
     });
-	frm.set_query("hco_purpose_of_health_tech", function() {
+    frm.set_query("hco_purpose_of_health_tech", function () {
         return {
-            filters:{
+            filters: {
                 'enabled': ['=', '1']
             }
         }
     });
-	frm.set_query("hco_pharmaceutical_form", function() {
+    frm.set_query("hco_pharmaceutical_form", function () {
         return {
-            filters:{
+            filters: {
                 'enabled': ['=', '1']
             }
         }
     });
-	frm.set_query("hco_mode", function() {
+    frm.set_query("hco_mode", function () {
         return {
-            filters:{
+            filters: {
                 'enabled': ['=', '1']
             }
         }
     });
-	frm.set_query("hco_entry_route", function() {
+    frm.set_query("hco_entry_route", function () {
         return {
-            filters:{
+            filters: {
                 'enabled': ['=', '1']
             }
         }
     });
-	frm.set_query("hco_cause_of_attention", function() {
+    frm.set_query("hco_cause_of_attention", function () {
         return {
-            filters:{
+            filters: {
                 'enabled': ['=', '1']
             }
         }
@@ -94,61 +94,76 @@ frappe.ui.form.on("Patient Encounter", "onload", function(frm) {
 
 // Información del Departamento
 frappe.ui.form.on('Patient Encounter', {
-	medical_department: function(frm) {
-		frm.events.set_medical_department_fields(frm);
-	},
+    medical_department: function (frm) {
+        frm.events.set_medical_department_fields(frm);
+    },
 
-	set_medical_department_fields: function(frm) {
-		if (frm.doc.medical_department) {
-			frappe.call({
-				method: 'frappe.client.get',
-				args: {
-					doctype: 'Medical Department',
-					name: frm.doc.medical_department
-				},
-				callback: function(data) {
+    set_medical_department_fields: function (frm) {
+        if (frm.doc.medical_department) {
+            frappe.call({
+                method: 'frappe.client.get',
+                args: {
+                    doctype: 'Medical Department',
+                    name: frm.doc.medical_department
+                },
+                callback: function (data) {
                     if (data.message && data.message.hco_service_code) {
                         let values = {
-                            'hco_service_code':data.message.hco_service_code
+                            'hco_service_code': data.message.hco_service_code
                         };
                         frm.set_value(values);
                         frm.refresh_field("hco_service_code");
                     }
-				}
-			});
-		}
-		else {
-			let values = {
-				'hco_service_code': ''
-			};
-			frm.set_value(values);
+                }
+            });
+        }
+        else {
+            let values = {
+                'hco_service_code': ''
+            };
+            frm.set_value(values);
             frm.refresh_field("hco_service_code");
-		}
-	},
+        }
+    },
 });
+
+frappe.ui.form.on("Patient Encounter", {
+    refresh: function (frm) {
+        frm.add_custom_button('Historia del Paciente', () => {
+            let url = '/app/patient_history';
+            if (frm.doc.patient) {
+                url += `?patient=${frm.doc.patient}`;
+            }
+            window.open(url, '_blank');
+        });
+    },
+
+});
+
+
 
 
 // Información del Código Médico en Cita con el Paciente
 frappe.ui.form.on('Patient Encounter', {
-	appointment: function(frm) {
-		frm.events.set_appointment_medical_code_fields(frm);
-	},
+    appointment: function (frm) {
+        frm.events.set_appointment_medical_code_fields(frm);
+    },
 
-	set_appointment_medical_code_fields: function(frm) {
-		if (frm.doc.appointment) {
-			frappe.call({
+    set_appointment_medical_code_fields: function (frm) {
+        if (frm.doc.appointment) {
+            frappe.call({
                 method: 'frappe.client.get',
-				args: {
-					doctype: 'Patient Appointment',
-					name: frm.doc.appointment
-				},
-                callback: function(r) {
+                args: {
+                    doctype: 'Patient Appointment',
+                    name: frm.doc.appointment
+                },
+                callback: function (r) {
                     if (r.message && r.message.hco_medical_code) {
 
                         frm.doc.codification_table = [];
-                        
+
                         let entry = frm.add_child("codification_table");
-                        
+
                         entry.medical_code = r.message.hco_medical_code;
 
                         frm.refresh_field("codification_table");
@@ -157,10 +172,55 @@ frappe.ui.form.on('Patient Encounter', {
 
                 }
             });
-		}
-		else {
-			frm.doc.codification_table = [];
+        }
+        else {
+            frm.doc.codification_table = [];
             frm.refresh_field("codification_table");
-		}
-	},
+        }
+    },
 });
+// Calculo de IMC y Presión Arterial
+frappe.ui.form.on('Patient Encounter', {
+    height: function (frm) {
+        if (frm.doc.height && frm.doc.weight) {
+            calculate_bmi(frm);
+        }
+    },
+
+    weight: function (frm) {
+        if (frm.doc.height && frm.doc.weight) {
+            calculate_bmi(frm);
+        }
+    },
+
+    bp_systolic: function (frm) {
+        if (frm.doc.bp_systolic && frm.doc.bp_diastolic) {
+            set_bp(frm);
+        }
+    },
+
+    bp_diastolic: function (frm) {
+        if (frm.doc.bp_systolic && frm.doc.bp_diastolic) {
+            set_bp(frm);
+        }
+    }
+});
+
+function calculate_bmi(frm) {
+    let bmi = (frm.doc.weight / (frm.doc.height * frm.doc.height)).toFixed(2);
+    let bmi_note = null;
+
+    if (bmi < 18.5) bmi_note = 'Underweight';
+    else if (bmi < 25) bmi_note = 'Normal';
+    else if (bmi < 30) bmi_note = 'Overweight';
+    else bmi_note = 'Obese';
+
+    frm.set_value('bmi', bmi);
+    frm.set_value('nutrition_note', bmi_note);
+}
+
+function set_bp(frm) {
+    let bp = frm.doc.bp_systolic + '/' + frm.doc.bp_diastolic + ' mmHg';
+    frm.set_value('bp', bp);
+}
+
