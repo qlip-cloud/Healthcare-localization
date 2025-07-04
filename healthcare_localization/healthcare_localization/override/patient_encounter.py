@@ -9,7 +9,10 @@ class HealthcarePatientEncounter(ERPPatientEncounter):
 
     def copy_diagnosis(self):
         if self.hco_diagnosis:
-            self.diagnosis = self.hco_diagnosis
+            self.diagnosis = [{
+                "diagnosis": self.hco_diagnosis,
+                "is_primary_diagnosis": 1
+            }]
 
     def on_submit(self):
         super().on_submit()
