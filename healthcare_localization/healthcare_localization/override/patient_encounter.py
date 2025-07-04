@@ -3,17 +3,6 @@ from erpnext.healthcare.doctype.patient_encounter.patient_encounter import Patie
 
 class HealthcarePatientEncounter(ERPPatientEncounter):
 
-    def before_save(self):
-        super().before_save() 
-        self.copy_diagnosis() 
-
-    def copy_diagnosis(self):
-        if self.hco_diagnosis:
-            self.diagnosis = [{
-                "diagnosis": self.hco_diagnosis,
-                "is_primary_diagnosis": 1
-            }]
-
     def on_submit(self):
         super().on_submit()
         self.create_vital_signs()
