@@ -29,6 +29,9 @@ app_license = "MIT"
 
 # include js in page
 # page_js = {"page" : "public/js/file.js"}
+page_js = {
+		"patient_history": "public/js/patient_history_extension.js"
+}
 
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
@@ -38,12 +41,12 @@ app_license = "MIT"
 
 doctype_js = {
     "Sales Invoice" : "public/js/sales_invoice.js",
-	"Company" : "public/js/company.js",
-	"Patient" : "public/js/patient.js",
-	"Patient Appointment": "public/js/patient_appointment.js",
-	"Patient Encounter": "public/js/patient_encounter.js",
-	"Item": "public/js/item.js",
-	"Medical Department": "public/js/medical_department.js"
+		"Company" : "public/js/company.js",
+		"Patient" : "public/js/patient.js",
+		"Patient Appointment": "public/js/patient_appointment.js",
+		"Patient Encounter": "public/js/patient_encounter.js",
+		"Item": "public/js/item.js",
+		"Medical Department": "public/js/medical_department.js"
 }
 
 # Home Pages
