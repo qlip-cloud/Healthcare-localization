@@ -1,23 +1,11 @@
 frappe.pages['patient_history'].on_page_show = function (wrapper) {
   const $wrapper = $(wrapper);
-  const $main_section = $wrapper.find('.show_chart_btns');
+  const $main_section = $wrapper.find('.patient_documents');
 
-  if ($main_section.length && !$main_section.find('.my-custom-buttons').length) {
+  if ($main_section.length) {
     initializePatientHistoryButtons($main_section);
   }
-
-};
-
-function initializePatientHistoryButtons($main_section) {
-  const $btn_group = $(`
-    <div class="my-custom-buttons" style="margin-bottom: 15px;">
-      <button class="btn btn-sm btn-secondary" data-history-type="pathological">Personales Patológicos</button>
-      <button class="btn btn-sm btn-secondary" data-history-type="family">Antecedentes Familiares</button>
-      <button class="btn btn-sm btn-secondary" data-history-type="gynecological">Información Ginecoobstetra</button>
-    </div>
-  `);
-
-  $main_section.before($btn_group);
+  // Configuración para cada tipo de historial (global)
   const historyConfig = {
     pathological: {
       template: "Personales Patológicos",
@@ -41,176 +29,232 @@ function initializePatientHistoryButtons($main_section) {
       successMessage: "Información ginecoobstetra actualizado correctamente."
     }
   };
-
-  // Event listener único para todos los botones
-  $main_section.on('click', '[data-history-type]', function () {
-    const historyType = $(this).data('history-type');
-    const config = historyConfig[historyType];
-
-    if (config) {
-      openPatientHistoryDialog(config);
+  
+  function initializePatientHistoryButtons($main_section) {
+    // Solo crear los botones si no existen
+    if (!$main_section.find('.my-custom-buttons').length) {
+      const $btn_group = $(`
+        <div class="my-custom-buttons" style="margin-bottom: 15px; display: none;">
+          <button class="btn btn-sm btn-secondary" data-history-type="pathological">Personales Patológicos</button>
+          <button class="btn btn-sm btn-secondary" data-history-type="family">Antecedentes Familiares</button>
+          <button class="btn btn-sm btn-secondary" data-history-type="gynecological">Información Ginecoobstetra</button>
+        </div>
+      `);
+  
+      $main_section.prepend($btn_group);
+  
+      // Event listener único para todos los botones
+      $main_section.on('click', '[data-history-type]', function() {
+        const historyType = $(this).data('history-type');
+        const config = historyConfig[historyType];
+        
+        if (config) {
+          openPatientHistoryDialog(config);
+        }
+      });
+  
+      // Configurar el listener para cambios en el paciente
+      setupPatientChangeListener($main_section);
     }
-  });
-}
-
-function openPatientHistoryDialog(config) {
-  const patient = $('div[data-fieldname="patient"] input').val();
-
-  if (!patient) {
-    showError('No se ha seleccionado un paciente.');
-    return;
   }
-
-  frappe.db.get_doc('Patient', patient)
-    .then(doc => {
-      loadHistoryTemplate(config, doc);
-    })
-    .catch(error => {
-      showError('No se pudo cargar el paciente: ' + error.message);
-      console.error("Error al obtener paciente:", error);
+  
+  function setupPatientChangeListener($main_section) {
+    // Función para mostrar/ocultar botones según si hay paciente seleccionado
+    function toggleButtons() {
+      const patient = $('div[data-fieldname="patient"] input').val();
+      const $buttons = $main_section.find('.my-custom-buttons');
+      
+      if (patient && patient.trim() !== '') {
+        $buttons.show();
+      } else {
+        $buttons.hide();
+      }
+    }
+  
+    // Verificar inmediatamente
+    setTimeout(toggleButtons, 100); // Pequeño delay para asegurar que el DOM esté listo
+  
+    // Escuchar cambios en el campo paciente
+    $(document).on('change', 'div[data-fieldname="patient"] input', toggleButtons);
+    
+    // También escuchar eventos de input para cambios en tiempo real
+    $(document).on('input', 'div[data-fieldname="patient"] input', toggleButtons);
+    
+    // Escuchar cuando se limpia el campo
+    $(document).on('frappe:form:set_value', function(e, fieldname, value) {
+      if (fieldname === 'patient') {
+        toggleButtons();
+      }
     });
-}
-
-function loadHistoryTemplate(config, patientDoc) {
-  frappe.call({
-    method: "healthcare_localization.healthcare_localization.utils.get_info.get_pathological_history",
-    args: {
-      history_type: config.template
-    },
-    callback: function (r) {
-      const tableData = prepareTableData(patientDoc, config.detailField, r.message);
-      showHistoryDialog(config, patientDoc, tableData);
+  
+    // Escuchar cambios en el formulario (para casos donde el campo se actualiza programáticamente)
+    $(document).on('change', 'input[data-fieldname="patient"]', toggleButtons);
+    
+    // Polling como fallback (verificar cada 500ms)
+    setInterval(toggleButtons, 500);
+  }
+  
+  function openPatientHistoryDialog(config) {
+    const patient = $('div[data-fieldname="patient"] input').val();
+    
+    if (!patient) {
+      showError('No se ha seleccionado un paciente.');
+      return;
     }
-  });
-}
-
-function prepareTableData(patientDoc, detailField, templateData) {
-  const existingData = patientDoc[detailField] || [];
-
-  if (existingData.length > 0) {
-    return existingData.map(row => ({
-      description: row.description,
-      si: row.si || 0,
-      observations: row.observations || '',
-      alert: row.alert || 0
-    }));
+  
+    frappe.db.get_doc('Patient', patient)
+      .then(doc => {
+        loadHistoryTemplate(config, doc);
+      })
+      .catch(error => {
+        showError('No se pudo cargar el paciente: ' + error.message);
+        console.error("Error al obtener paciente:", error);
+      });
   }
-
-  if (templateData && templateData.length > 0) {
-    return templateData.map(row => ({
-      description: row.description,
-      si: 0,
-      observations: '',
-      alert: 0
-    }));
+  
+  function loadHistoryTemplate(config, patientDoc) {
+    frappe.call({
+      method: "healthcare_localization.healthcare_localization.utils.get_info.get_pathological_history",
+      args: {
+        history_type: config.template
+      },
+      callback: function (r) {
+        const tableData = prepareTableData(patientDoc, config.detailField, r.message);
+        showHistoryDialog(config, patientDoc, tableData);
+      }
+    });
   }
-
-  return [];
-}
-
-function showHistoryDialog(config, patientDoc, tableData) {
-  const dialog = new frappe.ui.Dialog({
-    title: config.title,
-    size: 'extra-large',
-    fields: [
+  
+  function prepareTableData(patientDoc, detailField, templateData) {
+    const existingData = patientDoc[detailField] || [];
+    
+    if (existingData.length > 0) {
+      return existingData.map(row => ({
+        description: row.description,
+        si: row.si || 0,
+        observations: row.observations || '',
+        alert: row.alert || 0
+      }));
+    }
+    
+    if (templateData && templateData.length > 0) {
+      return templateData.map(row => ({
+        description: row.description,
+        si: 0,
+        observations: '',
+        alert: 0
+      }));
+    }
+    
+    return [];
+  }
+  
+  function showHistoryDialog(config, patientDoc, tableData) {
+    const dialog = new frappe.ui.Dialog({
+      title: config.title,
+      size: 'extra-large',
+      fields: [
+        {
+          label: 'Plantilla',
+          fieldname: config.fieldname,
+          fieldtype: 'Link',
+          options: 'qp_HCO_history_template',
+          default: config.template,
+          read_only: 1,
+          hidden: 1,
+        },
+        {
+          label: 'History Detail',
+          fieldname: config.detailField,
+          fieldtype: 'Table',
+          options: 'qp_HCO_pathological_history',
+          cannot_add_rows: false,
+          in_place_edit: true,
+          data: tableData,
+          fields: getTableFields()
+        }
+      ],
+      primary_action_label: 'Guardar',
+      primary_action(values) {
+        savePatientHistory(config, patientDoc, values, dialog);
+      }
+    });
+  
+    dialog.show();
+  }
+  
+  function getTableFields() {
+    return [
       {
-        label: 'Plantilla',
-        fieldname: config.fieldname,
-        fieldtype: 'Link',
-        options: 'qp_HCO_history_template',
-        default: config.template,
-        read_only: 1,
-        hidden: 1,
+        label: 'Descripción',
+        fieldname: 'description',
+        fieldtype: 'Data',
+        reqd: 1,
+        in_list_view: true
       },
       {
-        label: 'History Detail',
-        fieldname: config.detailField,
-        fieldtype: 'Table',
-        options: 'qp_HCO_pathological_history',
-        cannot_add_rows: false,
-        in_place_edit: true,
-        data: tableData,
-        fields: getTableFields()
+        label: 'Sí',
+        fieldname: 'si',
+        fieldtype: 'Check',
+        in_list_view: true
+      },
+      {
+        label: 'Observaciones',
+        fieldname: 'observations',
+        fieldtype: 'Data',
+        in_list_view: true
+      },
+      {
+        label: 'Alerta',
+        fieldname: 'alert',
+        fieldtype: 'Check',
+        in_list_view: true
       }
-    ],
-    primary_action_label: 'Guardar',
-    primary_action(values) {
-      savePatientHistory(config, patientDoc, values, dialog);
-    }
-  });
-
-  dialog.show();
-}
-
-function getTableFields() {
-  return [
-    {
-      label: 'Descripción',
-      fieldname: 'description',
-      fieldtype: 'Data',
-      reqd: 1,
-      in_list_view: true
-    },
-    {
-      label: 'Sí',
-      fieldname: 'si',
-      fieldtype: 'Check',
-      in_list_view: true
-    },
-    {
-      label: 'Observaciones',
-      fieldname: 'observations',
-      fieldtype: 'Data',
-      in_list_view: true
-    },
-    {
-      label: 'Alerta',
-      fieldname: 'alert',
-      fieldtype: 'Check',
-      in_list_view: true
-    }
-  ];
-}
-
-function savePatientHistory(config, patientDoc, values, dialog) {
-  patientDoc[config.fieldname] = config.template;
-  patientDoc[config.detailField] = [];
-
-  const detailData = values[config.detailField] || [];
-  detailData.forEach(row => {
-    patientDoc[config.detailField].push({
-      doctype: 'qp_HCO_pathological_history',
-      parentfield: config.detailField,
-      parenttype: 'Patient',
-      parent: patientDoc.name,
-      description: row.description,
-      si: row.si,
-      observations: row.observations,
-      alert: row.alert
+    ];
+  }
+  
+  function savePatientHistory(config, patientDoc, values, dialog) {
+    // Actualizar el documento del paciente
+    patientDoc[config.fieldname] = config.template;
+    patientDoc[config.detailField] = [];
+  
+    const detailData = values[config.detailField] || [];
+    detailData.forEach(row => {
+      patientDoc[config.detailField].push({
+        doctype: 'qp_HCO_pathological_history',
+        parentfield: config.detailField,
+        parenttype: 'Patient',
+        parent: patientDoc.name,
+        description: row.description,
+        si: row.si,
+        observations: row.observations,
+        alert: row.alert
+      });
     });
-  });
-
-  frappe.call({
-    method: 'frappe.client.save',
-    args: {
-      doc: patientDoc
-    },
-    callback: (r) => {
-      if (!r.exc) {
-        frappe.msgprint(config.successMessage);
-        dialog.hide();
-      } else {
-        showError('Ocurrió un error al guardar el historial.');
-        console.error(r.exc);
+  
+    // Guardar el documento
+    frappe.call({
+      method: 'frappe.client.save',
+      args: {
+        doc: patientDoc
+      },
+      callback: (r) => {
+        if (!r.exc) {
+          frappe.msgprint(config.successMessage);
+          dialog.hide();
+        } else {
+          showError('Ocurrió un error al guardar el historial.');
+          console.error(r.exc);
+        }
       }
-    }
-  });
-}
-
-function showError(message) {
-  frappe.msgprint({
-    title: __('Error'),
-    message: __(message),
-    indicator: 'red'
-  });
-}
+    });
+  }
+  
+  function showError(message) {
+    frappe.msgprint({
+      title: __('Error'),
+      message: __(message),
+      indicator: 'red'
+    });
+  }
+};
