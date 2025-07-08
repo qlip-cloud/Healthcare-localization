@@ -5,7 +5,6 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
   if ($main_section.length) {
     initializePatientHistoryButtons($main_section);
   }
-  // Configuración para cada tipo de historial (global)
   const historyConfig = {
     pathological: {
       template: "Personales Patológicos",
@@ -31,7 +30,6 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
   };
   
   function initializePatientHistoryButtons($main_section) {
-    // Solo crear los botones si no existen
     if (!$main_section.find('.my-custom-buttons').length) {
       const $btn_group = $(`
         <div class="my-custom-buttons" style="margin-bottom: 15px; display: none;">
@@ -43,7 +41,6 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
   
       $main_section.prepend($btn_group);
   
-      // Event listener único para todos los botones
       $main_section.on('click', '[data-history-type]', function() {
         const historyType = $(this).data('history-type');
         const config = historyConfig[historyType];
@@ -53,13 +50,11 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
         }
       });
   
-      // Configurar el listener para cambios en el paciente
       setupPatientChangeListener($main_section);
     }
   }
   
   function setupPatientChangeListener($main_section) {
-    // Función para mostrar/ocultar botones según si hay paciente seleccionado
     function toggleButtons() {
       const patient = $('div[data-fieldname="patient"] input').val();
       const $buttons = $main_section.find('.my-custom-buttons');
@@ -71,26 +66,20 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
       }
     }
   
-    // Verificar inmediatamente
-    setTimeout(toggleButtons, 100); // Pequeño delay para asegurar que el DOM esté listo
+    setTimeout(toggleButtons, 100); 
   
-    // Escuchar cambios en el campo paciente
     $(document).on('change', 'div[data-fieldname="patient"] input', toggleButtons);
     
-    // También escuchar eventos de input para cambios en tiempo real
     $(document).on('input', 'div[data-fieldname="patient"] input', toggleButtons);
     
-    // Escuchar cuando se limpia el campo
     $(document).on('frappe:form:set_value', function(e, fieldname, value) {
       if (fieldname === 'patient') {
         toggleButtons();
       }
     });
   
-    // Escuchar cambios en el formulario (para casos donde el campo se actualiza programáticamente)
     $(document).on('change', 'input[data-fieldname="patient"]', toggleButtons);
     
-    // Polling como fallback (verificar cada 500ms)
     setInterval(toggleButtons, 500);
   }
   
