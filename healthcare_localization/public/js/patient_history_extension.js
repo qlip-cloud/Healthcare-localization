@@ -1,10 +1,11 @@
 frappe.pages['patient_history'].on_page_show = function (wrapper) {
   const $wrapper = $(wrapper);
-  const $main_section = $wrapper.find('.layout-main-section');
+  const $main_section = $wrapper.find('.show_chart_btns');
 
   if ($main_section.length && !$main_section.find('.my-custom-buttons').length) {
     initializePatientHistoryButtons($main_section);
   }
+
 };
 
 function initializePatientHistoryButtons($main_section) {
@@ -16,8 +17,7 @@ function initializePatientHistoryButtons($main_section) {
     </div>
   `);
 
-  $main_section.prepend($btn_group);
-
+  $main_section.before($btn_group);
   const historyConfig = {
     pathological: {
       template: "Personales Patológicos",
@@ -43,10 +43,10 @@ function initializePatientHistoryButtons($main_section) {
   };
 
   // Event listener único para todos los botones
-  $main_section.on('click', '[data-history-type]', function() {
+  $main_section.on('click', '[data-history-type]', function () {
     const historyType = $(this).data('history-type');
     const config = historyConfig[historyType];
-    
+
     if (config) {
       openPatientHistoryDialog(config);
     }
@@ -55,7 +55,7 @@ function initializePatientHistoryButtons($main_section) {
 
 function openPatientHistoryDialog(config) {
   const patient = $('div[data-fieldname="patient"] input').val();
-  
+
   if (!patient) {
     showError('No se ha seleccionado un paciente.');
     return;
@@ -86,7 +86,7 @@ function loadHistoryTemplate(config, patientDoc) {
 
 function prepareTableData(patientDoc, detailField, templateData) {
   const existingData = patientDoc[detailField] || [];
-  
+
   if (existingData.length > 0) {
     return existingData.map(row => ({
       description: row.description,
@@ -95,7 +95,7 @@ function prepareTableData(patientDoc, detailField, templateData) {
       alert: row.alert || 0
     }));
   }
-  
+
   if (templateData && templateData.length > 0) {
     return templateData.map(row => ({
       description: row.description,
@@ -104,7 +104,7 @@ function prepareTableData(patientDoc, detailField, templateData) {
       alert: 0
     }));
   }
-  
+
   return [];
 }
 
