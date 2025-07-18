@@ -10,7 +10,8 @@
   "rips",
   "col_brk",
   "end_date",
-  "confirmed"
+  "confirmed",
+  "amended_from"
  ],
  "fields": [
   {
@@ -43,11 +44,21 @@
    "fieldtype": "Check",
    "hidden": 1,
    "label": "Confirmado"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "qp_MD_RIPS",
+   "print_hide": 1,
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
+ "is_submittable": 1,
  "links": [],
- "modified": "2025-07-15 16:45:29.447902",
+ "modified": "2025-07-16 11:28:29.519829",
  "modified_by": "Administrator",
  "module": "Healthcare Localization",
  "name": "qp_MD_RIPS",
