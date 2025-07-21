@@ -45,11 +45,26 @@ def validate_rips(start_date, end_date, docname):
                 "success": False,
                 "msg": f"No invoices found in the date range from {start_date} to {end_date}.",
             }
+        # Generar RIPS JSON para cada factura
+        rips_data = []
+        for invoice in invoices:
+            try:
+                rips_json = generate_rips_json(invoice)
+                rips_data_temp = json.loads(rips_json)
+                rips_data.append(rips_data_temp)
 
-        # Generar JSON RIPS
-        rips_json = generate_rips_json(invoices)
-        rips_data = json.loads(rips_json)
+            except Exception as e:
+                frappe.log_error(
+                    message=f"Error generating RIPS for invoice {invoice.name}: {str(e)}",
+                    title="RIPS Generation Error",
+                )
+                continue
 
+        if not rips_data:
+            return {
+                "success": False,
+                "msg": "No valid RIPS data could be generated from the selected invoices.",
+            }
         # Generar archivo Excel
         excel_path = generate_rips_excel(rips_data, docname)
 
@@ -88,7 +103,7 @@ def validate_rips(start_date, end_date, docname):
             "msg": f"An error occurred while generating RIPS: {str(e)}",
         }
 
-
+    
 def attach_file_to_doc(docname, file_path):
     """
     Adjunta un archivo al documento qp_MD_RIPS.
