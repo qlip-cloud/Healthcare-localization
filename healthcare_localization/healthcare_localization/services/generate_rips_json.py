@@ -160,7 +160,7 @@ def get_users_info(sales_invoice, idx):
     if not iso_birth_country:
         sales_invoices_exception.hco_iso_birth_country_exception()
 
-    incap_paciente = get_incapacidad(sales_invoice.items)
+    incap_paciente = get_incapacidad(sales_invoice.get("items", []))
 
     res = {}
 
@@ -285,7 +285,7 @@ def get_consultas(sales_invoice):
     res_consultas = []
     indx_cons = 0
 
-    for item in sales_invoice.items:
+    for item in sales_invoice.get("items", []):
 
         # TODO: Determinar encuentro con el paciente de tipo consulta
         # Actualmente se asume que todo encuentro con el paciente/cita con encuentro con el paciente es una consulta
@@ -304,7 +304,7 @@ def get_consultas(sales_invoice):
 
         encounter_patient_validation(encounter_doc)
         
-        ppal_diagnosis = encounter_doc.diagnosis
+        ppal_diagnosis = encounter_doc.hco_diagnosis
         #for diag in encounter_doc.diagnosis:
             #ppal_diagnosis = diag.diagnosis
             #break
