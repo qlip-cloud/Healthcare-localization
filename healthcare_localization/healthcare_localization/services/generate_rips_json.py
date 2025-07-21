@@ -303,12 +303,13 @@ def get_consultas(sales_invoice):
         indx_cons += 1
 
         encounter_patient_validation(encounter_doc)
+        
+        ppal_diagnosis = encounter_doc.diagnosis
+        #for diag in encounter_doc.diagnosis:
+            #ppal_diagnosis = diag.diagnosis
+            #break
 
-        ppal_diagnosis = None
-        for diag in encounter_doc.diagnosis:
-            ppal_diagnosis = diag.diagnosis
-            break
-
+        
         if not ppal_diagnosis:
             sales_invoices_exception.patient_encounter_empty_field_exception(
                 "Diagnosis"
@@ -332,7 +333,7 @@ def get_consultas(sales_invoice):
         )
         inf_cons["causaMotivoAtencion"] = encounter_doc.hco_cause_of_attention or None
         inf_cons["codDiagnosticoPrincipal"] = (
-            ppal_diagnosis and ppal_diagnosis[0] or None
+            ppal_diagnosis or None
         )
         inf_cons["codDiagnosticoRelacionado1"] = (
             len(rel_diagnosis) > 0 and rel_diagnosis[0] or None
