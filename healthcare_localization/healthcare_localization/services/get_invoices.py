@@ -15,6 +15,7 @@ def get_invoices(start_date, end_date):
         ON si.name = transaction.parent
         WHERE si.posting_date BETWEEN %s AND %s
         AND si.docstatus = 1
+        AND si.hco_rips = 1
         AND transaction.status = 0 AND transaction.response = 'Exitosa'
     """
     return frappe.db.sql(query, (start_date, end_date), as_dict=True)
