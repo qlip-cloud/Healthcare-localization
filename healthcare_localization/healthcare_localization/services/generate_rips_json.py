@@ -25,11 +25,8 @@ def handle(sales_invoice):
 
     user_list.append(users_json)
 
-    servicios_json = get_servicios(sales_invoice)
-
     transaction_node["Usuarios"] = user_list    
     
-    transaction_node["Servicios"] = servicios_json
 
     # ---------------------------------------------------------------------------------
 
@@ -181,7 +178,7 @@ def get_users_info(sales_invoice, idx):
     res["codPaisOrigen"] = iso_birth_country
     res["consecutivo"] = idx
 
-    res["servicios"] = get_servicios(sales_invoice)
+    res["Servicios"] = get_servicios(sales_invoice)
 
     return res
 
