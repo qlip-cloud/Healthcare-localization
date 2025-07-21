@@ -55,7 +55,7 @@ def validate_rips(start_date, end_date, docname):
 
             except Exception as e:
                 frappe.log_error(
-                    message=f"Error generating RIPS for invoice {invoice.name}: {str(e)}",
+                    message=f"Error generating RIPS for invoice {invoice.name}: {str(e), frappe.get_traceback()}",
                     title="RIPS Generation Error",
                 )
                 continue
