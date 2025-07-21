@@ -43,21 +43,23 @@ def generate_rips_excel(rips_data, docname=None):
         # Procesar datos de manera optimizada
         for rips in rips_data:
             # Datos de transacción
-            transaccion = rips.get("transaccion", {})
+            transaccion = rips.copy()
+            transaccion.pop("Usuarios", None)  # Eliminar usuarios de transacción
             if transaccion:
                 data_sheets['Transaccion'].append(transaccion)
             
-            num_documento_obligado = transaccion.get("num_DocumentoIdObligado", "")
+            num_documento_obligado = transaccion.get("numDocumentoIdObligado", "")
             
             # Procesar usuarios y sus servicios
-            for usuario in rips.get("usuarios", []):
+            for usuario in rips.get("Usuarios", []):
                 # Agregar usuario con referencia al documento obligado
                 usuario_copy = usuario.copy()
                 usuario_copy["num_DocumentoIdObligado"] = num_documento_obligado
+                usuario_copy.pop("Servicios", None)
                 data_sheets['Usuarios'].append(usuario_copy)
                 
                 consecutivo_usuario = usuario.get("consecutivo", "")
-                servicios = usuario.get("servicios", {})
+                servicios = usuario.get("Servicios", {})
                 
                 # Procesar cada tipo de servicio
                 service_types = [
@@ -82,8 +84,6 @@ def generate_rips_excel(rips_data, docname=None):
             for sheet_name, data in data_sheets.items():
                 if data:  # Solo crear hojas que tengan datos
                     df = pd.DataFrame(data)
-                    # Optimizar tipos de datos
-                    df = optimize_dataframe_types(df)
                     df.to_excel(writer, sheet_name=sheet_name, index=False)
                     
                     worksheet = writer.sheets[sheet_name]
@@ -110,30 +110,3 @@ def generate_rips_excel(rips_data, docname=None):
             title="Excel Generation Error"
         )
         raise Exception(f"Error generating RIPS Excel file: {str(e)}")
-
-def optimize_dataframe_types(df):
-    """
-    Optimiza los tipos de datos del DataFrame para mejorar el rendimiento.
-    
-    Args:
-        df: DataFrame a optimizar
-        
-    Returns:
-        DataFrame optimizado
-    """
-    try:
-        for col in df.columns:
-            if df[col].dtype == 'object':
-                numeric_series = pd.to_numeric(df[col], errors='coerce')
-                if not numeric_series.isna().all():
-                    df[col] = numeric_series
-                else:
-                    df[col] = df[col].astype('string')
-        
-        return df
-    except Exception as e:
-        frappe.log_error(
-            message=f"Error optimizing DataFrame: {str(e)}",
-            title="DataFrame Optimization Error"
-        )
-        return df 
