@@ -64,10 +64,8 @@ def generate_rips_excel(rips_data, docname=None):
                 # Procesar cada tipo de servicio
                 service_types = [
                     ('consultas', 'Consultas'),
-                    ('urgencias', 'Urgencias'),
                     ('procedimientos', 'Procedimientos'),
                     ('hospitalizaciones', 'Hospitalizaciones'),
-                    ('recienNacidos', 'RecienNacidos'),
                     ('medicamentos', 'Medicamentos'),
                     ('otrosServicios', 'OtrosServicios')
                 ]

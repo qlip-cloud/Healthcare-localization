@@ -49,7 +49,8 @@ def validate_rips(start_date, end_date, docname):
         rips_data = []
         for invoice in invoices:
             try:
-                rips_json = generate_rips_json(invoice)
+                invoice_doc = frappe.get_doc("Sales Invoice", invoice.name)
+                rips_json = generate_rips_json(invoice_doc)
                 rips_data_temp = json.loads(rips_json)
                 rips_data.append(rips_data_temp)
 
