@@ -71,7 +71,11 @@ def generate_rips_excel(rips_data, docname=None):
                 ]
                 
                 for service_key, sheet_name in service_types:
-                    for servicio in servicios.get(service_key, []):
+                    services_list = servicios.get(service_key, [])
+                    servicios_filtrados = [
+                        s for s in services_list if isinstance(s, dict) and any(v not in [None, '', [], {}] for v in s.values())
+                    ]
+                    for servicio in servicios_filtrados:
                         servicio_copy = servicio.copy()
                         servicio_copy["num_DocumentoIdObligado"] = num_documento_obligado
                         servicio_copy["consecutivoUsuario"] = consecutivo_usuario
