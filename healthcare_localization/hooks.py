@@ -40,7 +40,6 @@ page_js = {
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 
 doctype_js = {
-    "Sales Invoice" : "public/js/sales_invoice.js",
 		"Company" : "public/js/company.js",
 		"Patient" : "public/js/patient.js",
 		"Patient Appointment": "public/js/patient_appointment.js",

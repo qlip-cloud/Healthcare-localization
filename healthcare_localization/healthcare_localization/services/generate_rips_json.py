@@ -173,8 +173,8 @@ def get_users_info(sales_invoice, idx):
     res["codMunicipioResidencia"] = patient_doc.hco_residence_municipality or None
     res["codZonaTerritorialResidencia"] = patient_doc.hco_territorial_zone or None
     res["incapacidad"] = incap_paciente
-    res["consecutivo"] = idx
     res["codPaisOrigen"] = iso_birth_country
+    res["consecutivo"] = idx
 
     res["servicios"] = get_servicios(sales_invoice)
 
