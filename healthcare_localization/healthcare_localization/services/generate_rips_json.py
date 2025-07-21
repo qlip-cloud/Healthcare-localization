@@ -16,6 +16,7 @@ def handle(sales_invoice):
 
     user_list = []
 
+
     # ------------------------------- ELIMINAR AL TERMINAR --------------------------------
 
     transaction_node = get_transaction_info(sales_invoice)
@@ -24,7 +25,11 @@ def handle(sales_invoice):
 
     user_list.append(users_json)
 
-    transaction_node["Usuarios"] = user_list
+    servicios_json = get_servicios(sales_invoice)
+
+    transaction_node["Usuarios"] = user_list    
+    
+    transaction_node["Servicios"] = servicios_json
 
     # ---------------------------------------------------------------------------------
 
