@@ -64,16 +64,18 @@ def generate_rips_excel(rips_data, docname=None):
                 # Procesar cada tipo de servicio
                 service_types = [
                     ('consultas', 'Consultas'),
-                    ('urgencias', 'Urgencias'),
                     ('procedimientos', 'Procedimientos'),
                     ('hospitalizaciones', 'Hospitalizaciones'),
-                    ('recienNacidos', 'RecienNacidos'),
                     ('medicamentos', 'Medicamentos'),
                     ('otrosServicios', 'OtrosServicios')
                 ]
                 
                 for service_key, sheet_name in service_types:
-                    for servicio in servicios.get(service_key, []):
+                    services_list = servicios.get(service_key, [])
+                    servicios_filtrados = [
+                        s for s in services_list if isinstance(s, dict) and any(v not in [None, '', [], {}] for v in s.values())
+                    ]
+                    for servicio in servicios_filtrados:
                         servicio_copy = servicio.copy()
                         servicio_copy["num_DocumentoIdObligado"] = num_documento_obligado
                         servicio_copy["consecutivoUsuario"] = consecutivo_usuario

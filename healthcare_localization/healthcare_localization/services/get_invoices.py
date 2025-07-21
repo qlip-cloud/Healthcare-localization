@@ -9,7 +9,7 @@ def get_invoices(start_date, end_date):
     :return: List of invoices within the date range that are submitted and validated by DIAN  
     """
     query = """
-        SELECT si.*
+        SELECT si.name
         FROM `tabSales Invoice` si
         INNER JOIN `tabqp_EICO_Transaction` transaction
         ON si.name = transaction.parent
