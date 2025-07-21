@@ -82,7 +82,7 @@ def generate_rips_excel(rips_data, docname=None):
         # Crear DataFrames y escribir al Excel
         with pd.ExcelWriter(file_path, engine='openpyxl') as writer:
             for sheet_name, data in data_sheets.items():
-                if data:  # Solo crear hojas que tengan datos
+                if data:
                     df = pd.DataFrame(data)
                     df.to_excel(writer, sheet_name=sheet_name, index=False)
                     
