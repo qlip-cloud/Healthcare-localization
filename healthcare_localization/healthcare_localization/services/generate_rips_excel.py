@@ -29,18 +29,17 @@ def generate_rips_excel(rips_data, docname=None):
 
         # Inicializar estructuras de datos
         data_sheets = {
-            'Transaccion': [],
-            'Usuarios': [],
-            'Consultas': [],
-            'Urgencias': [],
-            'Procedimientos': [],
-            'Hospitalizaciones': [],
-            'RecienNacidos': [],
-            'Medicamentos': [],
-            'OtrosServicios': []
+            'truansaccion': [],
+            'usuarios': [],
+            'consultas': [],
+            'urgencias': [],
+            'procedimientos': [],
+            'hospitalizaciones': [],
+            'recienNacidos': [],
+            'medicamentos': [],
+            'otrosServicios': []
         }
 
-        # Procesar datos de manera optimizada
         for rips in rips_data:
             # Datos de transacción
             transaccion = rips.copy()
@@ -54,7 +53,9 @@ def generate_rips_excel(rips_data, docname=None):
             for usuario in rips.get("Usuarios", []):
                 # Agregar usuario con referencia al documento obligado
                 usuario_copy = usuario.copy()
-                usuario_copy["num_DocumentoIdObligado"] = num_documento_obligado
+                items = list(usuario_copy.items())
+                items.insert(2, ("num_DocumentoIdObligado", num_documento_obligado))
+                usuario_copy = dict(items)
                 usuario_copy.pop("Servicios", None)
                 data_sheets['Usuarios'].append(usuario_copy)
                 
@@ -77,8 +78,10 @@ def generate_rips_excel(rips_data, docname=None):
                     ]
                     for servicio in servicios_filtrados:
                         servicio_copy = servicio.copy()
-                        servicio_copy["num_DocumentoIdObligado"] = num_documento_obligado
-                        servicio_copy["consecutivoUsuario"] = consecutivo_usuario
+                        items = list(servicio_copy.items())
+                        items.insert(0, ("num_DocumentoIdObligado", num_documento_obligado))
+                        items.insert(1, ("consecutivoUsuario", consecutivo_usuario))
+                        servicio_copy = dict(items)
                         data_sheets[sheet_name].append(servicio_copy)
 
         # Crear DataFrames y escribir al Excel
