@@ -1,3 +1,4 @@
+from datetime import date, time, datetime, timedelta
 import frappe
 import json
 
@@ -289,7 +290,7 @@ def get_consultas(sales_invoice):
 
     for item in sales_invoice.get("items", []):
 
-        # TODO: Determinar encuentro con el paciente de tipo consulta
+        # TODO: Determinar encuentro con cel paciente de tipo consulta
         # Actualmente se asume que todo encuentro con el paciente/cita con encuentro con el paciente es una consulta
         encounter_doc = None
         reference_dt = item.get("reference_dt")
@@ -435,15 +436,161 @@ def encounter_patient_validation(encounter_doc):
 
 
 def get_medicamentos(sales_invoice):
+    """"
+    codPrestador
+    numAutorizacion
+    idMIPRES
+    fechaDispensAdmon
+    codDiagnosticoPrincipal
+    codDiagnosticoRelacionado
+    tipoMedicamento
+    codTecnologiaSalud
+    nomTecnologiaSalud
+    concentracionMedicamento
+    unidadMedida
+    formaFarmaceutica
+    unidadMinDispensa
+    cantidadMedicamento
+    diasTratamiento
+    tipoDocumentoIdentificacion
+    numDocumentoIdentificacion
+    vrUnitMedicamento
+    vrServicio
+    conceptoRecaudo
+    valorPagoModerador
+    numFEVPagoModerador
+    consecutivo
+    """
     res_medicamentos = []
+    try:
 
-    inf_med = {}
+        cod_prestador = frappe.db.get_value(
+            "Company", sales_invoice.company, "hco_codprestador"
+        )
+        if not cod_prestador:
+            sales_invoices_exception.cod_prestador_company_exception()
 
-    res_medicamentos.append(inf_med)
+        patient_doc = frappe.db.get_values(
+            "Patient",
+            sales_invoice.patient,
+            fieldname=["eico_nvben_tdoc", "eico_nvben_ndoc"],
+            as_dict=1,
+        )[0]
+
+        if not patient_doc.eico_nvben_tdoc or not patient_doc.eico_nvben_ndoc:
+            sales_invoices_exception.nvben_doc_patient_exception()
+
+        numAutorizacion = sales_invoice.get("hco_authorization_number", "")
+
+        tipoDocumentoIdentificacion = patient_doc.eico_nvben_tdoc
+
+        numDocumentoIdentificacion = patient_doc.eico_nvben_ndoc
+        idx = 0
+
+        for item in sales_invoice.get("items", []):
+            encounter_doc = None
+            reference_dt = item.get("reference_dt")
+            reference_dn = item.get("reference_dn")
+            if reference_dt in ("Patient Encounter", "Patient Appointment"):
+                encounter_doc = get_encounter_doc(reference_dt, reference_dn)
+            else:
+                continue
+            
+            rel_diagnosis = [x.diagnosis for x in encounter_doc.hco_related_diagnosis]
+            drugs_prescriptions = get_drugs_prescriptions(encounter_doc)
+            for prescription in drugs_prescriptions:
+                inf_med = {}
+                drug_info = get_drug_info(prescription.drug_code)
+                inf_med["codPrestador"] = cod_prestador
+                inf_med["numAutorizacion"] = numAutorizacion
+                inf_med["idMIPRES"] = None # Medicamento no financiado por presupuesto máximo 
+                if encounter_doc.encounter_date and encounter_doc.encounter_time:
+                    if isinstance(encounter_doc.encounter_time, timedelta):
+                        dummy_datetime_today = datetime.combine(date.today(), time.min)
+                        actual_time = (dummy_datetime_today + encounter_doc.encounter_time).time()
+                    elif isinstance(encounter_doc.encounter_time, time):
+                        actual_time = encounter_doc.encounter_time
+                    else:
+                        actual_time = None 
+
+                    if actual_time:
+                        combined_datetime = datetime.combine(
+                            encounter_doc.encounter_date,
+                            actual_time
+                        )
+                        inf_med["fechaDispensAdmon"] = combined_datetime.strftime("%Y-%m-%d %H:%M")
+                    else:
+                        inf_med["fechaDispensAdmon"] = encounter_doc.encounter_date.strftime("%Y-%m-%d") if encounter_doc.encounter_date else ""
+
+                elif encounter_doc.encounter_date:
+                    inf_med["fechaDispensAdmon"] = encounter_doc.encounter_date.strftime("%Y-%m-%d")
+                else:
+                    inf_med["fechaDispensAdmon"] = ""
+                inf_med["codDiagnosticoPrincipal"] = encounter_doc.hco_diagnosis or ""
+                inf_med["codDiagnosticoRelacionado"] =  rel_diagnosis[0] if rel_diagnosis else None
+                inf_med["tipoMedicamento"] = drug_info.hco_type_of_medication or ""
+                inf_med["codTecnologiaSalud"] = prescription.drug_code or ""
+                inf_med["nomTecnologiaSalud"] = prescription.drug_name or ""
+                """
+                Corresponde a la concentración del medicamento y unidad de medida, solo aplica para medicamentos de tipo Preparación Magistral
+                Si el medicamento no es de tipo Preparación Magistral, se debe registrar el valor None
+                """
+                inf_med["concentracionMedicamento"] = None 
+                inf_med["unidadMedida"] = None
+                inf_med["formaFarmaceutica"] = drug_info.hco_pharmaceutical_form or ""
+                inf_med["unidadMinDispensa"] = drug_info.hco_minimum_dispensing_unit
+                inf_med["cantidadMedicamento"] = prescription.hco_quantity or 0
+                inf_med["diasTratamiento"] = prescription.hco_interval or 0
+                '''
+                - 1: Si modalidad de pago es pago por eventos
+                - 0: Para las demás modalidades de 
+                '''
+                inf_med["vrUnitMedicamento"] = 0    
+                inf_med["vrServicio"] = 0  # Se asume que la modalidad de pago no es pago por eventos
+                inf_med["conceptoRecaudo"] = "05"  # No aplica
+                inf_med["valorPagoModerador"] = 0  # No aplica
+                inf_med["numFEVPagoModerador"] = None  # No aplica
+
+                idx += 1
+            
+                res_medicamentos.append(inf_med)
+
+    except Exception as e:
+        frappe.log_error(
+            message=f"Error processing medications for invoice {sales_invoice.name}: {str(e)}",
+            title="Medication Processing Error"
+        )
 
     return res_medicamentos
 
 
+def get_drugs_prescriptions(encounter_doc):
+    """
+    Obtiene las prescripciones de medicamentos del encuentro del paciente.
+    """
+    drugs_prescriptions = []
+
+    if encounter_doc and encounter_doc.drug_prescription:
+        for prescription in encounter_doc.drug_prescription:
+            if prescription.drug_code:
+                drugs_prescriptions.append(prescription)
+
+    return drugs_prescriptions
+
+
+def get_drug_info(drug_code):
+    """
+    Obtiene la información del medicamento a partir de su código.
+    """
+    drug_info = frappe.db.get_value(
+        "Item", drug_code, ["hco_type_of_medication", "hco_minimum_dispensing_unit", "hco_pharmaceutical_form"],
+        as_dict=True
+    )
+    
+    if not drug_info:
+        sales_invoices_exception.drug_not_found_exception(drug_code)
+
+    return drug_info
 def get_procedimientos(sales_invoice):
     res_procedimientos = []
 
