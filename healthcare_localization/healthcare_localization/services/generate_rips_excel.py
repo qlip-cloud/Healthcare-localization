@@ -45,7 +45,7 @@ def generate_rips_excel(rips_data, docname=None):
             transaccion = rips.copy()
             transaccion.pop("Usuarios", None)  # Eliminar usuarios de transacción
             if transaccion:
-                data_sheets['Transaccion'].append(transaccion)
+                data_sheets['transaccion'].append(transaccion)
             
             num_documento_obligado = transaccion.get("numDocumentoIdObligado", "")
             
@@ -57,18 +57,18 @@ def generate_rips_excel(rips_data, docname=None):
                 items.insert(2, ("num_DocumentoIdObligado", num_documento_obligado))
                 usuario_copy = dict(items)
                 usuario_copy.pop("Servicios", None)
-                data_sheets['Usuarios'].append(usuario_copy)
+                data_sheets['usuarios'].append(usuario_copy)
                 
                 consecutivo_usuario = usuario.get("consecutivo", "")
                 servicios = usuario.get("Servicios", {})
                 
                 # Procesar cada tipo de servicio
                 service_types = [
-                    ('consultas', 'Consultas'),
-                    ('procedimientos', 'Procedimientos'),
-                    ('hospitalizaciones', 'Hospitalizaciones'),
-                    ('medicamentos', 'Medicamentos'),
-                    ('otrosServicios', 'OtrosServicios')
+                    ('consultas', 'consultas'),
+                    ('procedimientos', 'procedimientos'),
+                    ('hospitalizaciones', 'hospitalizaciones'),
+                    ('medicamentos', 'medicamentos'),
+                    ('otrosServicios', 'otrosServicios')
                 ]
                 
                 for service_key, sheet_name in service_types:
