@@ -1,0 +1,20 @@
+{
+ "action": "Show Form Tour",
+ "creation": "2024-10-21 15:13:39.876449",
+ "description": "# Asociar Ambiente\n\nAsociar ambiente y registrar configuraci\u00f3n adicional en la compa\u00f1\u00eda para efectuar el env\u00edo de la petici\u00f3n del RIPS.",
+ "docstatus": 0,
+ "doctype": "Onboarding Step",
+ "idx": 0,
+ "is_complete": 0,
+ "is_single": 0,
+ "is_skipped": 0,
+ "modified": "2024-10-21 17:31:29.388692",
+ "modified_by": "Administrator",
+ "name": "Associate Environment",
+ "owner": "Administrator",
+ "reference_document": "Company",
+ "show_form_tour": 0,
+ "show_full_form": 0,
+ "title": "Associate Environment",
+ "validate_action": 1
+}

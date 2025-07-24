@@ -29,12 +29,24 @@ app_license = "MIT"
 
 # include js in page
 # page_js = {"page" : "public/js/file.js"}
+page_js = {
+		"patient_history": "public/js/patient_history_extension.js"
+}
 
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
+
+doctype_js = {
+		"Company" : "public/js/company.js",
+		"Patient" : "public/js/patient.js",
+		"Patient Appointment": "public/js/patient_appointment.js",
+		"Patient Encounter": "public/js/patient_encounter.js",
+		"Item": "public/js/item.js",
+		"Medical Department": "public/js/medical_department.js"
+}
 
 # Home Pages
 # ----------
@@ -58,6 +70,8 @@ app_license = "MIT"
 
 # before_install = "healthcare_localization.install.before_install"
 # after_install = "healthcare_localization.install.after_install"
+
+after_migrate = "healthcare_localization.healthcare_localization.utils.add_index.add_index"
 
 # Desk Notifications
 # ------------------
@@ -85,6 +99,12 @@ app_license = "MIT"
 # 	"ToDo": "custom_app.overrides.CustomToDo"
 # }
 
+override_doctype_class = {
+	'Patient': 'healthcare_localization.healthcare_localization.override.patient.HealthcarePatient',
+  'Patient Encounter': 'healthcare_localization.healthcare_localization.override.patient_encounter.HealthcarePatientEncounter',
+	'Healthcare Practitioner': 'healthcare_localization.healthcare_localization.override.healthcare_practitioner.HealthcarePractitioner',
+}
+
 # Document Events
 # ---------------
 # Hook on document methods and events
@@ -96,6 +116,14 @@ app_license = "MIT"
 # 		"on_trash": "method"
 #	}
 # }
+
+doc_events = {
+
+    "Gender": {
+        "validate": ["healthcare_localization.healthcare_localization.uses_cases.gender.validation.handle"]
+    }
+}
+
 
 # Scheduled Tasks
 # ---------------
@@ -129,6 +157,10 @@ app_license = "MIT"
 # override_whitelisted_methods = {
 # 	"frappe.desk.doctype.event.event.get_events": "healthcare_localization.event.get_events"
 # }
+override_whitelisted_methods = {
+	"erpnext.healthcare.doctype.patient_appointment.patient_appointment.make_encounter": "healthcare_localization.override.patient_appointment.make_encounter"
+}
+
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
@@ -172,4 +204,42 @@ user_data_fields = [
 # auth_hooks = [
 # 	"healthcare_localization.auth.validate"
 # ]
+
+fixtures = [
+	{"doctype": "qp_HCO_Operator"},
+	{"doctype": "qp_HCO_TerritorialZone"},
+	{"doctype": "qp_HCO_ServicesGroup"},
+	{"doctype": "qp_HCO_ServiceCode"},
+	{"doctype": "qp_HCO_history_template"},
+	{"doctype": "qp_HCO_option_list"},
+	{"doctype": "Medical Department", "filters": [
+		[
+			"name", "in", [
+				"Nutrición",
+				"Psicología",
+				"Psiquiatría"
+			]
+		]
+	]},
+	{"doctype": "Gender", "filters": [
+		[
+			"name", "in", [
+				"Hombre",
+				"Mujer",
+				"Indeterminado o Intersexual"
+			]
+		]
+	]},
+	{"doctype": "Translation", "filters": [
+		[
+			"source_text", "in", [
+				"This action sends a validation request to the Ministry of Health. Are you sure?",
+				"Validate RIPS"
+			]
+		],
+		[
+			"language", "=", "es-CO"
+		]
+	]}
+]
 

@@ -1,0 +1,98 @@
+User Type,Tipo de Usuario
+Territorial Zone,Zona Territorial
+Inability,Incapacidad
+Responsible,Responsable
+Responsible Kinship,Parentesco Responsable
+Responsible Phone,Teléfono Responsable
+Companion,Acompañante
+Companion Kinship,Parentesco Acompañante
+Companion Phone,Teléfono Acompañante
+Companion Email,Email Acompañante
+History,Historia
+Family History,Historia Familiar
+Evolution,Evolución
+Treatment,Tratamiento
+Entry Route,Via de ingreso al sector salud
+Healthcare Localization,Localización Salud
+RIPS supplementary data,Datos complementarios RIPS
+Service Code,Código de Servicio
+Services Group,Grupo de Servicios
+Cause That Motivates Attention,Causa que motiva la atención
+Technology in Health,Tecnología en Salud
+Mode,Modalidad
+Purpose of Health Technology,Finalidad de tecnología en salud
+Type of Medication,Tipo de Medicamento
+Pharmaceutical Form,Forma Farmaceutica
+Minimum Dispensing Unit,Unidad mínima de dispensación
+Noun,Nombre
+Board,Tabla
+Provider Code,Código Prestador
+Contract,Contrato
+RIPS Invoice,Factura RIPS
+Validated by the Ministry of Health,Validada por el Ministerio de Salud
+Validate RIPS,Validar RIPS
+This action sends a validation request to the Ministry of Health. Are you sure?,Esta acción envía solicitud de validdación al ministerio de salud. ¿Desea continuar?
+Register Environment,Registrar Entorno
+Associate Environment,Asociar Ambiente
+Let's Set Up the Healthcare Localization Module.,Configuremos el módulo de localización de atención médica.
+The Healthcare Localization Module is all set up!,¡El módulo de localización sanitaria está listo!
+"Environment, settings, masters and more","Entorno, configuraciones, maestros y más"
+Select the connection type to generate the RIPS.,Seleccione el tipo de conexión para generar el RIPS.
+You must indicate the code of the provider associated with the company.,Debe indicar el código del prestador asociado a la compañía.
+Related diagnosis,Diagnóstico relacionado
+Code {0} is already used in {1},"El código {0} ya se utiliza en {1}"
+Health Document Type,Tipo Documento Salud
+The request is not sent...,No se envía la petición...
+There was an error. Check error list,Se ha producido un error. Consultar lista de errores
+Tax ID in Company not found,No se encontró el ID fiscal de la empresa
+ISO Numeric Code,Código Numérico ISO
+Country in third party not found,País en Tercero no encontrado
+ISO numeric code in Country not found,Código numérico ISO del País no encontrado
+Patient in Sales Invoice not found,Paciente en Factura de Ventas no encontrado
+Tax ID in Customer not found,No se encontró el ID fiscal del cliente
+Code in Gender not found,Código en género no encontrado
+Patient Relation,Relación del Paciente,
+ISO alpha-3 Code,Código alpha-3 ISO
+Residence Municipality,Municipio de Residencia
+Residence Country,País de Residencia
+Birth Country,País de Origen
+ISO numeric code in Residence Country not found,Código ISO en País de Residencia no encontrado
+ISO numeric code in Birth Country not found,Código ISO en País de Origen no encontrado
+Other Masters,Otros Maestros
+Environment,Entorno
+Register Patient,Registrar Paciente
+in Invoice not found,en Factura no encontrado
+Provider code in Company not found,Código prestador en Compañía no enconrtado
+in Patient Encounter not found,en el encuentro con el paciente no encontrado
+Identification document in Patient not found,Documento de identificación del paciente no encontrado
+Diagnosis Type,Tipo de Diagnóstico
+Patient Encounter in Patient Appointment,Encuentro con el paciente en la cita médica
+Authorization Number,Número de Autorización
+Pathological History,Personales Patológicos
+Gynecological and obstetric history,Información Ginecoobstetra
+History Template,Plantilla de Historia
+Level of Education,Nivel de Escolaridad
+Biological Sex,Sexo Biológico
+Ethnicity,Étnia
+Ethnic Community,Comunidad Étnica
+Basics,Básicos
+"The client accepts the company's General Privacy and Data Protection Policy","El cliente acepta la Política General de Privacidad y Protección de Datos de la empresa"
+Current Illness,Enfermedad Actual
+Gender Identity,Identidad de Género
+Residence Department,Departamento de Residencia
+Disability Information,Información sobre incapacidad
+Is maternity leave,Es licencia de maternidad?
+Reason for disability,Motivo de la incapacidad
+Disability Origin,Origen de la incapacidad
+Scope of disability,Alcance de la incapacidad
+Retroactive disability,Incapacidad retroactiva
+Date from,Fecha de Inicio
+Date to,Fecha de Terminación
+Healthcare Localization Settings,Config. Localización Salud
+Coverage,Cobertura en Salud
+Coverage Description,Descripción de Cobertura en Salud
+Description scope of disability,Descripción del alcance de la incapacidad
+Customer {0} is associated.,El cliente {0} está asociado.
+Professional Register, Registro Profesional
+Specialty, Especialidad
+Route of administration, Vía de administración

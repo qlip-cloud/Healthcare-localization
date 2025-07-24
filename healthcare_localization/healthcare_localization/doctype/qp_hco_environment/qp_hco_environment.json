@@ -1,0 +1,155 @@
+{
+ "actions": [],
+ "autoname": "field:code",
+ "creation": "2024-10-21 14:45:12.206160",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "code",
+  "operator_code",
+  "operator_name",
+  "enviroment_type",
+  "url",
+  "email",
+  "user",
+  "password"
+ ],
+ "fields": [
+  {
+   "fieldname": "code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Code",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "operator_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Operator Code",
+   "options": "qp_HCO_Operator",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "operator_code.operator_name",
+   "fieldname": "operator_name",
+   "fieldtype": "Read Only",
+   "in_list_view": 1,
+   "label": "Operator Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "enviroment_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Enviroment Type",
+   "options": "Producci\u00f3n\nPruebas",
+   "reqd": 1
+  },
+  {
+   "fieldname": "url",
+   "fieldtype": "Data",
+   "label": "Url",
+   "reqd": 1
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "Email"
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Data",
+   "label": "User"
+  },
+  {
+   "fieldname": "password",
+   "fieldtype": "Data",
+   "label": "Password"
+  }
+ ],
+ "links": [],
+ "modified": "2024-10-21 14:51:20.670090",
+ "modified_by": "Administrator",
+ "module": "Healthcare Localization",
+ "name": "qp_HCO_Environment",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Healthcare Administrator",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "LabTest Approver",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Laboratory User",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Nursing User",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Physician",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Patient",
+   "share": 1
+  }
+ ],
+ "restrict_to_domain": "Healthcare",
+ "search_fields": "operator_name",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

@@ -1,0 +1,54 @@
+{
+ "actions": [],
+ "creation": "2025-04-11 16:19:42.012337",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "description",
+  "si",
+  "observations",
+  "alert"
+ ],
+ "fields": [
+  {
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Description",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "si",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Si"
+  },
+  {
+   "fieldname": "observations",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Observations"
+  },
+  {
+   "default": "0",
+   "fieldname": "alert",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Alert"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-04-14 11:58:54.734008",
+ "modified_by": "Administrator",
+ "module": "Healthcare Localization",
+ "name": "qp_HCO_pathological_history",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

@@ -1,0 +1,35 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Gender",
+  "gender": "Hombre",
+  "hco_code": "H",
+  "modified": "2024-11-22 14:04:35.353340",
+  "name": "Hombre",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Gender",
+  "gender": "Mujer",
+  "hco_code": "M",
+  "modified": "2024-11-22 14:04:55.224534",
+  "name": "Mujer",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Gender",
+  "gender": "Indeterminado o Intersexual",
+  "hco_code": "I",
+  "modified": "2024-11-22 15:50:30.607346",
+  "name": "Indeterminado o Intersexual",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ }
+]

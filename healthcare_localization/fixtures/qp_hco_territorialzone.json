@@ -1,0 +1,30 @@
+[
+ {
+  "board": null,
+  "code": "01",
+  "description": null,
+  "docstatus": 0,
+  "doctype": "qp_HCO_TerritorialZone",
+  "enabled": 1,
+  "modified": "2024-11-25 09:14:20.784078",
+  "name": "01",
+  "noun": "Rural",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ },
+ {
+  "board": null,
+  "code": "02",
+  "description": null,
+  "docstatus": 0,
+  "doctype": "qp_HCO_TerritorialZone",
+  "enabled": 1,
+  "modified": "2024-11-25 09:14:43.214036",
+  "name": "02",
+  "noun": "Urbano",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
+ }
+]

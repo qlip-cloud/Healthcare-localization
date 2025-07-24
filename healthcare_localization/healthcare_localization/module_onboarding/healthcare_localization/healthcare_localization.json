@@ -1,0 +1,32 @@
+{
+ "allow_roles": [
+  {
+   "role": "Healthcare Administrator"
+  }
+ ],
+ "creation": "2024-10-21 15:13:55.417851",
+ "docstatus": 0,
+ "doctype": "Module Onboarding",
+ "documentation_url": "https://documents.qlip.cloud/docs/user/manual/en/healthcare-localization",
+ "idx": 0,
+ "is_complete": 0,
+ "modified": "2025-01-07 16:55:36.980444",
+ "modified_by": "Administrator",
+ "module": "Healthcare Localization",
+ "name": "Healthcare Localization",
+ "owner": "Administrator",
+ "steps": [
+  {
+   "step": "Register Environment"
+  },
+  {
+   "step": "Associate Environment"
+  },
+  {
+   "step": "Register Patient"
+  }
+ ],
+ "subtitle": "Environment, settings, masters and more",
+ "success_message": "The Healthcare Localization Module is all set up!",
+ "title": "Let's Set Up the Healthcare Localization Module."
+}
