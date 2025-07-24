@@ -1,6 +1,6 @@
 {
  "actions": [],
- "autoname": "format:RIPS:{start_date}_to_{end_date}",
+ "autoname": "format:RIPS{#####}",
  "creation": "2025-07-15 14:13:57.056568",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -58,7 +58,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-16 11:28:29.519829",
+ "modified": "2025-07-24 13:44:10.646664",
  "modified_by": "Administrator",
  "module": "Healthcare Localization",
  "name": "qp_MD_RIPS",

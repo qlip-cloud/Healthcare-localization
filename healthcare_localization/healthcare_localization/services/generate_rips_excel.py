@@ -20,8 +20,8 @@ def generate_rips_excel(rips_data, docname=None):
             raise ValueError("No RIPS data provided")
 
         # Generar nombre único para el archivo
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"RIPS_Data_{docname or 'unknown'}_{timestamp}.xlsx"
+        timestamp = datetime.now().strftime("%Y%m%d")
+        filename = f"{docname or 'unknown'}_{timestamp}.xlsx"
         file_path = os.path.join(frappe.utils.get_site_path(), "private", "files", filename)
         
         # Asegurar que el directorio existe
@@ -29,7 +29,7 @@ def generate_rips_excel(rips_data, docname=None):
 
         # Inicializar estructuras de datos
         data_sheets = {
-            'truansaccion': [],
+            'transaccion': [],
             'usuarios': [],
             'consultas': [],
             'urgencias': [],
