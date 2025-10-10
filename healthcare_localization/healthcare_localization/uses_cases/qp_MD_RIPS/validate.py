@@ -66,6 +66,11 @@ def validate_rips(start_date, end_date, docname):
                 "success": False,
                 "msg": "No valid RIPS data could be generated from the selected invoices.",
             }
+        
+        # Generar archivo JSON 
+        json_path = save_rips_json_file(rips_data[0], docname)
+        attach_file_to_doc(docname, json_path)
+        
         # Generar archivo Excel
         excel_path = generate_rips_excel(rips_data, docname)
 
@@ -132,6 +137,7 @@ def attach_file_to_doc(docname, file_path):
                 "attached_to_field": "rips",
                 "content": file_content,
                 "decode": False,
+                "is_private": 1,
             }
         )
         file_doc.insert()
@@ -148,5 +154,29 @@ def attach_file_to_doc(docname, file_path):
         frappe.log_error(
             message=f"Error attaching file to document {docname}: {str(e)}\n{frappe.get_traceback()}",
             title="File Attachment Error",
+        )
+        raise
+
+def save_rips_json_file(rips_data, docname):
+    """
+    Guarda los datos RIPS como archivo JSON temporal y devuelve la ruta completa.
+    """
+    try:
+        site_path = frappe.utils.get_site_path()
+        temp_dir = os.path.join(site_path, "private", "files", "rips_temp")
+        os.makedirs(temp_dir, exist_ok=True)
+
+        filename = f"RIPS_{docname}.json"
+        file_path = os.path.join(temp_dir, filename)
+
+        with open(file_path, "w", encoding="utf-8") as f:
+            json.dump(rips_data, f, ensure_ascii=False, indent=2)
+
+        return file_path
+
+    except Exception as e:
+        frappe.log_error(
+            message=f"Error creating JSON file for RIPS {docname}: {str(e)}\n{frappe.get_traceback()}",
+            title="RIPS JSON File Error",
         )
         raise

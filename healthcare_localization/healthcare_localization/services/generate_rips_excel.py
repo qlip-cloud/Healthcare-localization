@@ -9,7 +9,7 @@ def generate_rips_excel(rips_data, docname=None):
     Generates an Excel file from the RIPS data with optimized processing.
 
     Args:
-        rips_data (list): List of dictionaries containing RIPS data.
+        rips_data (dict): Dictionary of dictionaries containing RIPS data.
         docname (str): Document name for unique file naming.
 
     Returns:
@@ -43,24 +43,24 @@ def generate_rips_excel(rips_data, docname=None):
         for rips in rips_data:
             # Datos de transacción
             transaccion = rips.copy()
-            transaccion.pop("Usuarios", None)  # Eliminar usuarios de transacción
+            transaccion.pop("usuarios", None)  # Eliminar usuarios de transacción
             if transaccion:
                 data_sheets['transaccion'].append(transaccion)
             
             num_documento_obligado = transaccion.get("numDocumentoIdObligado", "")
             
             # Procesar usuarios y sus servicios
-            for usuario in rips.get("Usuarios", []):
+            for usuario in rips.get("usuarios", []):
                 # Agregar usuario con referencia al documento obligado
                 usuario_copy = usuario.copy()
                 items = list(usuario_copy.items())
                 items.insert(2, ("num_DocumentoIdObligado", num_documento_obligado))
                 usuario_copy = dict(items)
-                usuario_copy.pop("Servicios", None)
+                usuario_copy.pop("servicios", None)
                 data_sheets['usuarios'].append(usuario_copy)
                 
                 consecutivo_usuario = usuario.get("consecutivo", "")
-                servicios = usuario.get("Servicios", {})
+                servicios = usuario.get("servicios", {})
                 
                 # Procesar cada tipo de servicio
                 service_types = [
