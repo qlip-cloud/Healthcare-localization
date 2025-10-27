@@ -224,3 +224,58 @@ function set_bp(frm) {
     frm.set_value('bp', bp);
 }
 
+// DocType: Patient Encounter
+// Evento: onload o refresh
+
+frappe.ui.form.on('Patient Encounter', {
+    onload: function(frm) {
+        reorder_fields(frm);
+    },
+    refresh: function(frm) {
+        reorder_fields(frm);
+    }
+});
+
+function reorder_fields(frm) {
+    // Obtener el elemento después del cual queremos insertar
+    let target_field = frm.fields_dict['hco_sb_school_certificates'];
+    
+    if (!target_field) return;
+    
+    let target_wrapper = target_field.wrapper;
+    
+    // Campos a mover en orden
+    let fields_to_move = [
+        'rehabilitation_section',   
+        'sb_test_prescription',
+        'codification',
+    ];
+    
+    // Mover cada campo después del objetivo
+    fields_to_move.forEach(function(fieldname) {
+        let field = frm.fields_dict[fieldname];
+        if (field && field.wrapper) {
+            // Insertar después del campo objetivo
+            $(field.wrapper).insertAfter(target_wrapper);
+            // Actualizar el objetivo para el próximo campo
+            target_wrapper = field.wrapper;
+        }
+    });
+
+    let drugs_field = frm.fields_dict['sb_drug_prescription'];
+    if (!drugs_field) return;
+    
+    let drugs_wrapper = drugs_field.wrapper;
+    
+    let procedure_field = 'sb_procedures'
+
+    let procedure = frm.fields_dict[procedure_field];
+    if (procedure && procedure.wrapper) {
+        // Insertar después del campo objetivo
+        $(procedure.wrapper).insertAfter(drugs_wrapper);
+        // Actualizar el objetivo para el próximo campo
+        drugs_wrapper = procedure.wrapper;
+    }
+
+}
+
