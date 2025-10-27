@@ -492,6 +492,7 @@ def get_medicamentos(sales_invoice):
         tipoDocumentoIdentificacion = patient_doc.eico_nvben_tdoc
 
         numDocumentoIdentificacion = patient_doc.eico_nvben_ndoc
+
         idx = 1
 
         for item in sales_invoice.get("items", []):
@@ -502,7 +503,11 @@ def get_medicamentos(sales_invoice):
                 encounter_doc = get_encounter_doc(reference_dt, reference_dn)
             else:
                 continue
-            
+            ppal_diagnosis = encounter_doc.hco_diagnosis
+            if not ppal_diagnosis:
+                sales_invoices_exception.patient_encounter_empty_field_exception(
+                    "Diagnosis"
+                )
             rel_diagnosis = [x.diagnosis for x in encounter_doc.hco_related_diagnosis]
             drugs_prescriptions = get_drugs_prescriptions(encounter_doc)
             for prescription in drugs_prescriptions:
@@ -512,8 +517,8 @@ def get_medicamentos(sales_invoice):
                 inf_med["numAutorizacion"] = numAutorizacion
                 inf_med["idMIPRES"] = None # Medicamento no financiado por presupuesto máximo
                 inf_med["fechaDispensAdmon"] = get_encounter_datetime(encounter_doc) 
-                inf_med["codDiagnosticoPrincipal"] = encounter_doc.hco_diagnosis or ""
-                inf_med["codDiagnosticoRelacionado"] =  rel_diagnosis[0] if rel_diagnosis else None
+                inf_med["codDiagnosticoPrincipal"] = get_diagnosis_code(ppal_diagnosis) if ppal_diagnosis else None
+                inf_med["codDiagnosticoRelacionado"] =  (len(rel_diagnosis) > 0 and get_diagnosis_code(rel_diagnosis[0]) or None)
                 inf_med["tipoMedicamento"] = drug_info.hco_type_of_medication or ""
                 inf_med["codTecnologiaSalud"] = prescription.drug_code or ""
                 inf_med["nomTecnologiaSalud"] = prescription.drug_name or ""
