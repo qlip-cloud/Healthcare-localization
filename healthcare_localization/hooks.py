@@ -121,7 +121,37 @@ doc_events = {
 
     "Gender": {
         "validate": ["healthcare_localization.healthcare_localization.uses_cases.gender.validation.handle"]
-    }
+    },
+		"Patient Encounter": {
+      "before_insert": ["healthcare_localization.healthcare_localization.uses_cases.patient.validation.handle"],
+		},
+    "Patient Appointment": {
+			"before_insert": ["healthcare_localization.healthcare_localization.uses_cases.patient.validation.handle"]
+    },
+    "Clinical Procedure": {
+			"before_insert": ["healthcare_localization.healthcare_localization.uses_cases.patient.validation.handle"]
+		},	
+    "Vital Signs": {
+			"before_insert": ["healthcare_localization.healthcare_localization.uses_cases.patient.validation.handle"]
+		},
+    "Lab Test": {
+			"before_insert": ["healthcare_localization.healthcare_localization.uses_cases.patient.validation.handle"]
+		},
+    "Sample Collection": {
+			"before_insert": ["healthcare_localization.healthcare_localization.uses_cases.patient.validation.handle"]
+		},
+    "Therapy Plan": {
+			"before_insert": ["healthcare_localization.healthcare_localization.uses_cases.patient.validation.handle"]
+		},
+    "Therapy Session": {
+			"before_insert": ["healthcare_localization.healthcare_localization.uses_cases.patient.validation.handle"]
+		},
+    "Patient Assessment": {
+			"before_insert": ["healthcare_localization.healthcare_localization.uses_cases.patient.validation.handle"]
+		},
+    "Inpatient Record": {
+			"before_insert": ["healthcare_localization.healthcare_localization.uses_cases.patient.validation.handle"]
+		}
 }
 
 
