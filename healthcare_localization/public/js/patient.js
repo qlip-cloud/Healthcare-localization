@@ -213,3 +213,18 @@ frappe.ui.form.on('Patient', 'hco_ob_gyn_history', function(frm) {
         frm.refresh_field("hco_ob_gyn_history_detail");
 	}
 });
+
+// Indicador de estado
+frappe.get_indicator = function(doc) {
+    if (doc.doctype !== 'Patient') {
+        return;
+    }
+
+    const status = doc.hco_patient_status;
+
+    if (status === "Active") {
+        return [__("Activo"), "green", "status,=,Activo"];
+    } else if (status === "Inactive") {
+        return [__("Inactivo"), "red", "status,=,Inactivo"];
+    } 
+};
