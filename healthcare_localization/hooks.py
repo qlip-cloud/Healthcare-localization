@@ -45,7 +45,15 @@ doctype_js = {
 		"Patient Appointment": "public/js/patient_appointment.js",
 		"Patient Encounter": "public/js/patient_encounter.js",
 		"Item": "public/js/item.js",
-		"Medical Department": "public/js/medical_department.js"
+		"Medical Department": "public/js/medical_department.js",
+    "Clinical Procedure": "public/js/patient_validation.js",
+    "Vital Signs": "public/js/patient_validation.js",
+    "Lab Test": "public/js/patient_validation.js",
+    "Sample Collection": "public/js/patient_validation.js",
+    "Therapy Plan": "public/js/patient_validation.js",
+    "Therapy Session": "public/js/patient_validation.js",
+    "Patient Assessment": "public/js/patient_validation.js",
+    "Inpatient Record": "public/js/patient_validation.js",
 }
 
 # Home Pages
@@ -121,37 +129,7 @@ doc_events = {
 
     "Gender": {
         "validate": ["healthcare_localization.healthcare_localization.uses_cases.gender.validation.handle"]
-    },
-		"Patient Encounter": {
-      "before_insert": ["healthcare_localization.healthcare_localization.uses_cases.patient.validation.handle"],
-		},
-    "Patient Appointment": {
-			"before_insert": ["healthcare_localization.healthcare_localization.uses_cases.patient.validation.handle"]
-    },
-    "Clinical Procedure": {
-			"before_insert": ["healthcare_localization.healthcare_localization.uses_cases.patient.validation.handle"]
-		},	
-    "Vital Signs": {
-			"before_insert": ["healthcare_localization.healthcare_localization.uses_cases.patient.validation.handle"]
-		},
-    "Lab Test": {
-			"before_insert": ["healthcare_localization.healthcare_localization.uses_cases.patient.validation.handle"]
-		},
-    "Sample Collection": {
-			"before_insert": ["healthcare_localization.healthcare_localization.uses_cases.patient.validation.handle"]
-		},
-    "Therapy Plan": {
-			"before_insert": ["healthcare_localization.healthcare_localization.uses_cases.patient.validation.handle"]
-		},
-    "Therapy Session": {
-			"before_insert": ["healthcare_localization.healthcare_localization.uses_cases.patient.validation.handle"]
-		},
-    "Patient Assessment": {
-			"before_insert": ["healthcare_localization.healthcare_localization.uses_cases.patient.validation.handle"]
-		},
-    "Inpatient Record": {
-			"before_insert": ["healthcare_localization.healthcare_localization.uses_cases.patient.validation.handle"]
-		}
+    }
 }
 
 
