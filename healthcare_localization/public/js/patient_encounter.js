@@ -279,3 +279,25 @@ function reorder_fields(frm) {
 
 }
 
+// Validación para paciente inactivo (hco_patient_status != "Active")
+frappe.ui.form.on('Patient Encounter', {
+    patient: function(frm) {
+        if (frm.doc.patient) {
+            frappe.call({
+                method: 'frappe.client.get',
+                args: {
+                    doctype: 'Patient',
+                    name: frm.doc.patient
+                },
+                callback: function(data) {
+                    if (data.message) {
+                        let patient_status = data.message.hco_patient_status;
+                        if (patient_status !== "Active") {
+                            frappe.throw("Paciente Inactivo")
+                        }
+                    }
+                } 
+            });
+        }
+    }
+});
