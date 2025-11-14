@@ -228,10 +228,10 @@ function set_bp(frm) {
 // Evento: onload o refresh
 
 frappe.ui.form.on('Patient Encounter', {
-    onload: function(frm) {
+    onload: function (frm) {
         reorder_fields(frm);
     },
-    refresh: function(frm) {
+    refresh: function (frm) {
         reorder_fields(frm);
     }
 });
@@ -239,20 +239,20 @@ frappe.ui.form.on('Patient Encounter', {
 function reorder_fields(frm) {
     // Obtener el elemento después del cual queremos insertar
     let target_field = frm.fields_dict['hco_sb_school_certificates'];
-    
+
     if (!target_field) return;
-    
+
     let target_wrapper = target_field.wrapper;
-    
+
     // Campos a mover en orden
     let fields_to_move = [
-        'rehabilitation_section',   
+        'rehabilitation_section',
         'sb_test_prescription',
         'codification',
     ];
-    
+
     // Mover cada campo después del objetivo
-    fields_to_move.forEach(function(fieldname) {
+    fields_to_move.forEach(function (fieldname) {
         let field = frm.fields_dict[fieldname];
         if (field && field.wrapper) {
             // Insertar después del campo objetivo
@@ -264,9 +264,9 @@ function reorder_fields(frm) {
 
     let drugs_field = frm.fields_dict['sb_drug_prescription'];
     if (!drugs_field) return;
-    
+
     let drugs_wrapper = drugs_field.wrapper;
-    
+
     let procedure_field = 'sb_procedures'
 
     let procedure = frm.fields_dict[procedure_field];
@@ -281,7 +281,7 @@ function reorder_fields(frm) {
 
 // Validación para paciente inactivo (hco_patient_status != "Active")
 frappe.ui.form.on('Patient Encounter', {
-    patient: function(frm) {
+    patient: function (frm) {
         if (frm.doc.patient) {
             frappe.call({
                 method: 'frappe.client.get',
@@ -289,15 +289,42 @@ frappe.ui.form.on('Patient Encounter', {
                     doctype: 'Patient',
                     name: frm.doc.patient
                 },
-                callback: function(data) {
+                callback: function (data) {
                     if (data.message) {
                         let patient_status = data.message.hco_patient_status;
                         if (patient_status !== "Active") {
                             frappe.throw("Paciente Inactivo")
                         }
                     }
-                } 
+                }
             });
         }
     }
 });
+
+// Notificación de alergias del paciente
+frappe.ui.form.on('Patient Encounter', {
+    onload: function (frm) {
+        if (frm.doc.patient) {
+            if (frm.doc.hco_allergies && frm.doc.hco_allergies.trim() !== "") {
+                frappe.msgprint({
+                    message: __(`El paciente tiene alergias registradas: ${frm.doc.hco_allergies}`),
+                    title: __("Atención"),
+                    indicator: "orange"
+                });
+
+            }
+        }
+    },
+    on_submit: function (frm) {
+        if (frm.doc.patient) {
+            if (frm.doc.hco_allergies && frm.doc.hco_allergies.trim() !== "") {
+                frappe.msgprint({
+                    message: __(`El paciente tiene alergias registradas: ${frm.doc.hco_allergies}`),
+                    title: __("Atención"),
+                    indicator: "orange"
+                });
+            }
+        }
+    }
+})
