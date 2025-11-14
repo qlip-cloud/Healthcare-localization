@@ -58,6 +58,10 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
     let allergiesShown = false;
 
     function toggleButtons() {
+      if (frappe.get_route()[0] !== "patient_history") {
+        return;
+      }
+
       const patient = $('div[data-fieldname="patient"] input').val();
       const $buttons = $main_section.find('.my-custom-buttons');
 
@@ -83,6 +87,7 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
         allergiesShown = false;
       }
     }
+
 
 
     setTimeout(toggleButtons, 100);
