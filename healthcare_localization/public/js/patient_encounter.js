@@ -316,7 +316,7 @@ frappe.ui.form.on('Patient Encounter', {
             }
         }
     },
-    on_submit: function (frm) {
+    after_save: function (frm) {
         if (frm.doc.patient) {
             if (frm.doc.hco_allergies && frm.doc.hco_allergies.trim() !== "") {
                 frappe.msgprint({
