@@ -216,7 +216,6 @@ function calculate_bmi(frm) {
     else bmi_note = 'Obese';
 
     frm.set_value('bmi', bmi);
-    frm.set_value('nutrition_note', bmi_note);
 }
 
 function set_bp(frm) {
@@ -281,7 +280,7 @@ function reorder_fields(frm) {
 
 // Validación para paciente inactivo (hco_patient_status != "Active")
 frappe.ui.form.on('Patient Encounter', {
-    setup: function(frm) {
+    setup: function (frm) {
         if (!frm.original_read_only_state) {
             frm.original_read_only_state = {};
             Object.keys(frm.fields_dict).forEach(function (fieldname) {
@@ -362,3 +361,182 @@ frappe.ui.form.on('Patient Encounter', {
         }
     }
 })
+
+frappe.ui.form.on("Patient Encounter", {
+    refresh(frm) {
+        // Límites de caracteres
+        const limits = {
+            hco_reason_of_consultation: { min: 10, max: 500 },
+            hco_medical_history: { min: 0, max: 500 },
+            hco_allergies: { min: 0, max: 500 },
+            hco_surgical_history: { min: 0, max: 500 },
+            hco_other_history: { min: 0, max: 500 },
+            hco_current_illness: { min: 0, max: 500 },
+            hco_evolution: { min: 0, max: 500 },
+            hco_new_findings: { min: 0, max: 1000 },
+            hco_response_to_treatment: { min: 0, max: 500 },
+            hco_therapeutic_adjustments: { min: 0, max: 500 },
+            hco_school: { min: 0, max: 500 },
+            hco_medical_justification: { min: 0, max: 500 },
+            hco_certificate_details: { min: 0, max: 500 },
+            hco_physical_exam: { min: 0, max: 1000 },
+            hco_other_exam_detail: { min: 0, max: 100 },
+            hco_referral_details: { min: 0, max: 500 },
+            hco_treatment: { min: 0, max: 500 },
+            hco_general_recs: { min: 0, max: 500 }
+        };
+
+        frm.field_limits = limits;
+
+        frappe.after_ajax(() => {
+            for (let fieldname in limits) {
+                setup_field_validation(frm, fieldname, limits[fieldname]);
+            }
+        });
+    },
+
+    validate(frm) {
+        let errors = [];
+
+        for (let fieldname in frm.field_limits) {
+            const field = frm.get_field(fieldname);
+            const value = (frm.doc[fieldname] || "").trim();
+
+            if (field && !field.df.hidden && value.length > 0) {
+                const { min } = frm.field_limits[fieldname];
+
+                if (value.length < min) {
+                    errors.push({
+                        fieldname: fieldname,
+                        label: field.df.label,
+                        current: value.length,
+                        min: min
+                    });
+                }
+            }
+        }
+
+        if (errors.length > 0) {
+            const msg = errors.map(e =>
+                `<b>${e.label}:</b> ${e.current}/${e.min} caracteres`
+            ).join('<br>');
+
+            frappe.msgprint({
+                title: __('Campos incompletos'),
+                indicator: 'orange',
+                message: `Los siguientes campos necesitan más información:<br><br>${msg}`
+            });
+
+            // Enfocar el primer campo con error
+            frm.scroll_to_field(errors[0].fieldname);
+
+            frappe.validated = false;
+            return false;
+        }
+    }
+});
+
+// Configurar validación individual por campo
+function setup_field_validation(frm, fieldname, limits) {
+    const field = frm.get_field(fieldname);
+    if (!field || !field.input) return;
+
+    const $input = $(field.input);
+    const { min, max } = limits;
+
+    $input.attr("maxlength", max);
+
+
+    $input.off("input.charvalidation").on("input.charvalidation",
+        debounce(() => {
+            const value = (frm.doc[fieldname] || "").trim();
+            update_field_feedback(field, value.length, min, max);
+        }, 300)
+    );
+
+
+    $input.off("blur.charvalidation").on("blur.charvalidation", () => {
+        const value = (frm.doc[fieldname] || "").trim();
+        if (value.length > 0 && value.length < min) {
+            show_field_error(field, value.length, min);
+        } else {
+            clear_field_error(field);
+        }
+    });
+
+    $input.off("focus.charvalidation").on("focus.charvalidation", () => {
+        clear_field_error(field);
+    });
+}
+
+function update_field_feedback(field, length, min, max) {
+    const $counter = field.$wrapper.find(".char-counter .current");
+    const $input = $(field.input);
+
+    $counter.text(length);
+
+    const $wrapper = field.$wrapper.find(".char-counter");
+
+    if (length === 0) {
+        $wrapper.css("color", "#8d99a6"); 
+        $input.removeClass("validate-warning validate-success");
+    } else if (length < min) {
+        $wrapper.css("color", "#f39c12"); 
+        $input.addClass("validate-warning").removeClass("validate-success");
+    } else {
+        $wrapper.css("color", "#27ae60"); 
+        $input.addClass("validate-success").removeClass("validate-warning");
+    }
+}
+
+function show_field_error(field, current, min) {
+    const $input = $(field.input);
+
+    clear_field_error(field);
+
+    $input.addClass("validate-error");
+    field.$wrapper.append(`
+        <div class="char-error" style="color: #e74c3c; font-size: 12px; margin-top: 3px;">
+            <i class="fa fa-exclamation-circle"></i> 
+            Faltan ${min - current} caracteres (mínimo ${min})
+        </div>
+    `);
+}
+
+function clear_field_error(field) {
+    field.$wrapper.find(".char-error").remove();
+    $(field.input).removeClass("validate-error validate-warning");
+}
+
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+frappe.after_ajax(() => {
+    if (!document.getElementById("custom-field-validation-styles")) {
+        $("head").append(`
+            <style id="custom-field-validation-styles">
+                .validate-warning {
+                    border-color: #f39c12 !important;
+                    transition: border-color 0.3s ease;
+                }
+                .validate-success {
+                    border-color: #27ae60 !important;
+                    transition: border-color 0.3s ease;
+                }
+                .validate-error {
+                    border-color: #e74c3c !important;
+                    transition: border-color 0.3s ease;
+                }
+            </style>
+        `);
+    }
+});
