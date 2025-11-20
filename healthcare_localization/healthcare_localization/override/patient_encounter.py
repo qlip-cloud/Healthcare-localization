@@ -17,7 +17,7 @@ class HealthcarePatientEncounter(ERPPatientEncounter):
         fields = [
             self.temperature, self.pulse, self.respiratory_rate, self.tongue, self.abdomen,
             self.reflexes, self.bp_diastolic, self.bp_systolic, self.bp, self.vital_signs_note,
-            self.height, self.weight, self.bmi, self.nutrition_note
+            self.height, self.weight, self.bmi
         ]
 
         if not any(fields):
@@ -41,6 +41,5 @@ class HealthcarePatientEncounter(ERPPatientEncounter):
         vital_sign.height = self.height
         vital_sign.weight = self.weight
         vital_sign.bmi = self.bmi
-        vital_sign.nutrition_note = self.nutrition_note
         vital_sign.save(ignore_permissions=True)
         vital_sign.submit()
