@@ -373,7 +373,7 @@ frappe.ui.form.on("Patient Encounter", {
             hco_other_history: { min: 0, max: 500 },
             hco_current_illness: { min: 0, max: 500 },
             hco_evolution: { min: 0, max: 500 },
-            hco_new_findings: { min: 0, max: 1000 },
+            hco_new_findings: { min: 0, max: 500 },
             hco_response_to_treatment: { min: 0, max: 500 },
             hco_therapeutic_adjustments: { min: 0, max: 500 },
             hco_school: { min: 0, max: 500 },
@@ -385,12 +385,20 @@ frappe.ui.form.on("Patient Encounter", {
             hco_treatment: { min: 0, max: 500 },
             hco_general_recs: { min: 0, max: 500 }
         };
-
+        const size_limits = {
+            hco_school: 50,
+            hco_medical_justification: 50,
+            hco_treatment: 100,
+            hco_general_recs: 100
+        };
         frm.field_limits = limits;
-
+        frm.size_limits = size_limits;
         frappe.after_ajax(() => {
             for (let fieldname in limits) {
                 setup_field_validation(frm, fieldname, limits[fieldname]);
+            }
+            for (let fieldname in size_limits) {
+                modify_field_size(fieldname, size_limits[fieldname]);
             }
         });
     },
@@ -436,6 +444,16 @@ frappe.ui.form.on("Patient Encounter", {
     }
 });
 
+// Función modificar tamaño visual de campos
+
+function modify_field_size(fieldname, size) {
+    const field = frm.get_field(fieldname);
+    const $input = $(field.input);
+    if (!field || !field.input) return;
+
+     $input.css("height", "" + size + "px");
+    
+}
 // Configurar validación individual por campo
 function setup_field_validation(frm, fieldname, limits) {
     const field = frm.get_field(fieldname);
