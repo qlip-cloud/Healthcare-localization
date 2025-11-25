@@ -388,8 +388,8 @@ frappe.ui.form.on("Patient Encounter", {
         const size_limits = {
             hco_school: 35,
             hco_medical_justification: 35,
-            hco_treatment: 100,
-            hco_general_recs: 100
+            hco_treatment: 90,
+            hco_general_recs: 90
         };
         frm.field_limits = limits;
         frm.size_limits = size_limits;
