@@ -386,8 +386,8 @@ frappe.ui.form.on("Patient Encounter", {
             hco_general_recs: { min: 0, max: 500 }
         };
         const size_limits = {
-            hco_school: 50,
-            hco_medical_justification: 50,
+            hco_school: 35,
+            hco_medical_justification: 35,
             hco_treatment: 100,
             hco_general_recs: 100
         };
