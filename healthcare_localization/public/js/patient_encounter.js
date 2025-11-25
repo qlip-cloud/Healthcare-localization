@@ -362,6 +362,20 @@ frappe.ui.form.on('Patient Encounter', {
     }
 })
 
+// Desmarcar campos check automáticamente
+frappe.ui.form.on('Patient Encounter', {
+    hco_referral: function (frm) {
+        if(frm.doc.hco_referral){
+            frm.set_value('hco_no_referral', 0);
+        }
+    },
+    hco_no_referral: function (frm) {
+        if(frm.doc.hco_no_referral){
+            frm.set_value('hco_referral', 0);
+        }
+    }
+});
+
 frappe.ui.form.on("Patient Encounter", {
     refresh(frm) {
         // Límites de caracteres
