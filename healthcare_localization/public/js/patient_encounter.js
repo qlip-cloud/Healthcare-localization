@@ -398,7 +398,7 @@ frappe.ui.form.on("Patient Encounter", {
                 setup_field_validation(frm, fieldname, limits[fieldname]);
             }
             for (let fieldname in size_limits) {
-                modify_field_size(fieldname, size_limits[fieldname]);
+                modify_field_size(frm, fieldname, size_limits[fieldname]);
             }
         });
     },
@@ -446,7 +446,7 @@ frappe.ui.form.on("Patient Encounter", {
 
 // Función modificar tamaño visual de campos
 
-function modify_field_size(fieldname, size) {
+function modify_field_size(frm, fieldname, size) {
     const field = frm.get_field(fieldname);
     const $input = $(field.input);
     if (!field || !field.input) return;
