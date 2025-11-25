@@ -362,6 +362,20 @@ frappe.ui.form.on('Patient Encounter', {
     }
 })
 
+// Desmarcar campos check automáticamente
+frappe.ui.form.on('Patient Encounter', {
+    hco_referral: function (frm) {
+        if(frm.doc.hco_referral){
+            frm.set_value('hco_no_referral', 0);
+        }
+    },
+    hco_no_referral: function (frm) {
+        if(frm.doc.hco_no_referral){
+            frm.set_value('hco_referral', 0);
+        }
+    }
+});
+
 frappe.ui.form.on("Patient Encounter", {
     refresh(frm) {
         // Límites de caracteres
@@ -386,10 +400,10 @@ frappe.ui.form.on("Patient Encounter", {
             hco_general_recs: { min: 0, max: 500 }
         };
         const size_limits = {
-            hco_school: 50,
-            hco_medical_justification: 50,
-            hco_treatment: 100,
-            hco_general_recs: 100
+            hco_school: 35,
+            hco_medical_justification: 35,
+            hco_treatment: 90,
+            hco_general_recs: 90
         };
         frm.field_limits = limits;
         frm.size_limits = size_limits;
@@ -398,7 +412,7 @@ frappe.ui.form.on("Patient Encounter", {
                 setup_field_validation(frm, fieldname, limits[fieldname]);
             }
             for (let fieldname in size_limits) {
-                modify_field_size(fieldname, size_limits[fieldname]);
+                modify_field_size(frm, fieldname, size_limits[fieldname]);
             }
         });
     },
@@ -446,7 +460,7 @@ frappe.ui.form.on("Patient Encounter", {
 
 // Función modificar tamaño visual de campos
 
-function modify_field_size(fieldname, size) {
+function modify_field_size(frm, fieldname, size) {
     const field = frm.get_field(fieldname);
     const $input = $(field.input);
     if (!field || !field.input) return;
