@@ -6,6 +6,23 @@ class HealthcarePatientEncounter(ERPPatientEncounter):
     def on_submit(self):
         super().on_submit()
         self.create_vital_signs()
+        self.set_patient_additional_info()
+
+    def set_patient_additional_info(self):
+        patient = frappe.get_doc("Patient", self.patient)
+
+        
+        if self.hco_allergies:
+            patient.allergies = self.hco_allergies
+        
+        if self.hco_surgical_history:
+            patient.surgical_history = self.hco_surgical_history
+        
+        if self.hco_medical_history:
+            patient.medical_history = self.hco_medical_history
+        
+        patient.save(ignore_permissions=True)
+
 
     def create_vital_signs(self):
         if not self.patient:
