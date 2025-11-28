@@ -166,7 +166,8 @@ doc_events = {
 # 	"frappe.desk.doctype.event.event.get_events": "healthcare_localization.event.get_events"
 # }
 override_whitelisted_methods = {
-	"erpnext.healthcare.doctype.patient_appointment.patient_appointment.make_encounter": "healthcare_localization.override.patient_appointment.make_encounter"
+	"erpnext.healthcare.doctype.patient_appointment.patient_appointment.make_encounter": "healthcare_localization.override.patient_appointment.make_encounter",
+  "erpnext.healthcare.doctype.patient.patient.get_patient_detail": "healthcare_localization.override.patient.get_patient_detail",
 }
 
 #
