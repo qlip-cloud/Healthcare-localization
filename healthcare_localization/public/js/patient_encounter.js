@@ -216,7 +216,6 @@ function calculate_bmi(frm) {
     else bmi_note = 'Obese';
 
     frm.set_value('bmi', bmi);
-    frm.set_value('nutrition_note', bmi_note);
 }
 
 function set_bp(frm) {
@@ -224,3 +223,352 @@ function set_bp(frm) {
     frm.set_value('bp', bp);
 }
 
+// DocType: Patient Encounter
+// Evento: onload o refresh
+
+frappe.ui.form.on('Patient Encounter', {
+    onload: function (frm) {
+        reorder_fields(frm);
+    },
+    refresh: function (frm) {
+        reorder_fields(frm);
+    }
+});
+
+function reorder_fields(frm) {
+    // Obtener el elemento después del cual queremos insertar
+    let target_field = frm.fields_dict['hco_sb_school_certificates'];
+
+    if (!target_field) return;
+
+    let target_wrapper = target_field.wrapper;
+
+    // Campos a mover en orden
+    let fields_to_move = [
+        'rehabilitation_section',
+        'sb_test_prescription',
+        'codification',
+    ];
+
+    // Mover cada campo después del objetivo
+    fields_to_move.forEach(function (fieldname) {
+        let field = frm.fields_dict[fieldname];
+        if (field && field.wrapper) {
+            // Insertar después del campo objetivo
+            $(field.wrapper).insertAfter(target_wrapper);
+            // Actualizar el objetivo para el próximo campo
+            target_wrapper = field.wrapper;
+        }
+    });
+
+    let drugs_field = frm.fields_dict['sb_drug_prescription'];
+    if (!drugs_field) return;
+
+    let drugs_wrapper = drugs_field.wrapper;
+
+    let procedure_field = 'sb_procedures'
+
+    let procedure = frm.fields_dict[procedure_field];
+    if (procedure && procedure.wrapper) {
+        // Insertar después del campo objetivo
+        $(procedure.wrapper).insertAfter(drugs_wrapper);
+        // Actualizar el objetivo para el próximo campo
+        drugs_wrapper = procedure.wrapper;
+    }
+
+}
+
+// Validación para paciente inactivo (hco_patient_status != "Active")
+frappe.ui.form.on('Patient Encounter', {
+    setup: function (frm) {
+        if (!frm.original_read_only_state) {
+            frm.original_read_only_state = {};
+            Object.keys(frm.fields_dict).forEach(function (fieldname) {
+                let field = frm.fields_dict[fieldname];
+                if (field && field.df) {
+                    frm.original_read_only_state[fieldname] = field.df.read_only || 0;
+                }
+            });
+        }
+    },
+    patient: function (frm) {
+        if (frm.doc.patient) {
+            frappe.call({
+                method: 'frappe.client.get',
+                args: {
+                    doctype: 'Patient',
+                    name: frm.doc.patient
+                },
+                callback: function (data) {
+                    if (data.message) {
+                        let status = data.message.hco_patient_status;
+
+                        if (status !== "Active") {
+                            frappe.msgprint({
+                                message: __("Paciente Inactivo"),
+                                title: __("Error"),
+                                indicator: "red"
+                            });
+                            // Bloquear todos los campos excepto patient
+                            Object.keys(frm.fields_dict).forEach(function (fieldname) {
+                                if (fieldname !== 'patient') {
+                                    frm.set_df_property(fieldname, 'read_only', 1);
+                                }
+                            });
+                            frm.set_df_property('patient', 'read_only', 0);
+                            frm.disable_save();
+
+                        } else {
+                            // Restaurar el estado original de read_only de cada campo
+                            Object.keys(frm.fields_dict).forEach(function (fieldname) {
+                                if (frm.original_read_only_state && frm.original_read_only_state[fieldname] !== undefined) {
+                                    frm.set_df_property(fieldname, 'read_only', frm.original_read_only_state[fieldname]);
+                                }
+                            });
+                            frm.enable_save();
+                            frm.refresh_fields();
+                        }
+                    }
+                }
+            });
+        }
+    }
+});
+
+// Notificación de alergias del paciente
+frappe.ui.form.on('Patient Encounter', {
+    onload: function (frm) {
+        if (frm.doc.patient) {
+            if (frm.doc.hco_allergies && frm.doc.hco_allergies.trim() !== "") {
+                frappe.msgprint({
+                    message: __(`El paciente tiene alergias registradas: ${frm.doc.hco_allergies}`),
+                    title: __("Atención"),
+                    indicator: "orange"
+                });
+
+            }
+        }
+    },
+    after_save: function (frm) {
+        if (frm.doc.patient) {
+            if (frm.doc.hco_allergies && frm.doc.hco_allergies.trim() !== "") {
+                frappe.msgprint({
+                    message: __(`El paciente tiene alergias registradas: ${frm.doc.hco_allergies}`),
+                    title: __("Atención"),
+                    indicator: "orange"
+                });
+            }
+        }
+    }
+})
+
+// Desmarcar campos check automáticamente
+frappe.ui.form.on('Patient Encounter', {
+    hco_referral: function (frm) {
+        if(frm.doc.hco_referral){
+            frm.set_value('hco_no_referral', 0);
+        }
+    },
+    hco_no_referral: function (frm) {
+        if(frm.doc.hco_no_referral){
+            frm.set_value('hco_referral', 0);
+        }
+    }
+});
+
+frappe.ui.form.on("Patient Encounter", {
+    refresh(frm) {
+        // Límites de caracteres
+        const limits = {
+            hco_reason_of_consultation: { min: 10, max: 500 },
+            hco_medical_history: { min: 0, max: 500 },
+            hco_allergies: { min: 0, max: 500 },
+            hco_surgical_history: { min: 0, max: 500 },
+            hco_other_history: { min: 0, max: 500 },
+            hco_current_illness: { min: 0, max: 500 },
+            hco_evolution: { min: 0, max: 500 },
+            hco_new_findings: { min: 0, max: 500 },
+            hco_response_to_treatment: { min: 0, max: 500 },
+            hco_therapeutic_adjustments: { min: 0, max: 500 },
+            hco_school: { min: 0, max: 500 },
+            hco_medical_justification: { min: 0, max: 500 },
+            hco_certificate_details: { min: 0, max: 500 },
+            hco_physical_exam: { min: 0, max: 1000 },
+            hco_other_exam_detail: { min: 0, max: 100 },
+            hco_referral_details: { min: 0, max: 500 },
+            hco_treatment: { min: 0, max: 500 },
+            hco_general_recs: { min: 0, max: 500 }
+        };
+        const size_limits = {
+            hco_school: 35,
+            hco_medical_justification: 35,
+            hco_treatment: 90,
+            hco_general_recs: 90
+        };
+        frm.field_limits = limits;
+        frm.size_limits = size_limits;
+        frappe.after_ajax(() => {
+            for (let fieldname in limits) {
+                setup_field_validation(frm, fieldname, limits[fieldname]);
+            }
+            for (let fieldname in size_limits) {
+                modify_field_size(frm, fieldname, size_limits[fieldname]);
+            }
+        });
+    },
+
+    validate(frm) {
+        let errors = [];
+
+        for (let fieldname in frm.field_limits) {
+            const field = frm.get_field(fieldname);
+            const value = (frm.doc[fieldname] || "").trim();
+
+            if (field && !field.df.hidden && value.length > 0) {
+                const { min } = frm.field_limits[fieldname];
+
+                if (value.length < min) {
+                    errors.push({
+                        fieldname: fieldname,
+                        label: field.df.label,
+                        current: value.length,
+                        min: min
+                    });
+                }
+            }
+        }
+
+        if (errors.length > 0) {
+            const msg = errors.map(e =>
+                `<b>${e.label}:</b> ${e.current}/${e.min} caracteres`
+            ).join('<br>');
+
+            frappe.msgprint({
+                title: __('Campos incompletos'),
+                indicator: 'orange',
+                message: `Los siguientes campos necesitan más información:<br><br>${msg}`
+            });
+
+            // Enfocar el primer campo con error
+            frm.scroll_to_field(errors[0].fieldname);
+
+            frappe.validated = false;
+            return false;
+        }
+    }
+});
+
+// Función modificar tamaño visual de campos
+
+function modify_field_size(frm, fieldname, size) {
+    const field = frm.get_field(fieldname);
+    const $input = $(field.input);
+    if (!field || !field.input) return;
+
+     $input.css("height", "" + size + "px");
+    
+}
+// Configurar validación individual por campo
+function setup_field_validation(frm, fieldname, limits) {
+    const field = frm.get_field(fieldname);
+    if (!field || !field.input) return;
+
+    const $input = $(field.input);
+    const { min, max } = limits;
+
+    $input.attr("maxlength", max);
+
+
+    $input.off("input.charvalidation").on("input.charvalidation",
+        debounce(() => {
+            const value = (frm.doc[fieldname] || "").trim();
+            update_field_feedback(field, value.length, min, max);
+        }, 300)
+    );
+
+
+    $input.off("blur.charvalidation").on("blur.charvalidation", () => {
+        const value = (frm.doc[fieldname] || "").trim();
+        if (value.length > 0 && value.length < min) {
+            show_field_error(field, value.length, min);
+        } else {
+            clear_field_error(field);
+        }
+    });
+
+    $input.off("focus.charvalidation").on("focus.charvalidation", () => {
+        clear_field_error(field);
+    });
+}
+
+function update_field_feedback(field, length, min, max) {
+    const $counter = field.$wrapper.find(".char-counter .current");
+    const $input = $(field.input);
+
+    $counter.text(length);
+
+    const $wrapper = field.$wrapper.find(".char-counter");
+
+    if (length === 0) {
+        $wrapper.css("color", "#8d99a6"); 
+        $input.removeClass("validate-warning validate-success");
+    } else if (length < min) {
+        $wrapper.css("color", "#f39c12"); 
+        $input.addClass("validate-warning").removeClass("validate-success");
+    } else {
+        $wrapper.css("color", "#27ae60"); 
+        $input.addClass("validate-success").removeClass("validate-warning");
+    }
+}
+
+function show_field_error(field, current, min) {
+    const $input = $(field.input);
+
+    clear_field_error(field);
+
+    $input.addClass("validate-error");
+    field.$wrapper.append(`
+        <div class="char-error" style="color: #e74c3c; font-size: 12px; margin-top: 3px;">
+            <i class="fa fa-exclamation-circle"></i> 
+            Faltan ${min - current} caracteres (mínimo ${min})
+        </div>
+    `);
+}
+
+function clear_field_error(field) {
+    field.$wrapper.find(".char-error").remove();
+    $(field.input).removeClass("validate-error validate-warning");
+}
+
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+frappe.after_ajax(() => {
+    if (!document.getElementById("custom-field-validation-styles")) {
+        $("head").append(`
+            <style id="custom-field-validation-styles">
+                .validate-warning {
+                    border-color: #f39c12 !important;
+                    transition: border-color 0.3s ease;
+                }
+                .validate-success {
+                    border-color: #27ae60 !important;
+                    transition: border-color 0.3s ease;
+                }
+                .validate-error {
+                    border-color: #e74c3c !important;
+                    transition: border-color 0.3s ease;
+                }
+            </style>
+        `);
+    }
+});

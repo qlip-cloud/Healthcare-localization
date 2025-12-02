@@ -45,7 +45,15 @@ doctype_js = {
 		"Patient Appointment": "public/js/patient_appointment.js",
 		"Patient Encounter": "public/js/patient_encounter.js",
 		"Item": "public/js/item.js",
-		"Medical Department": "public/js/medical_department.js"
+		"Medical Department": "public/js/medical_department.js",
+    "Clinical Procedure": "public/js/patient_validation.js",
+    "Vital Signs": "public/js/patient_validation.js",
+    "Lab Test": "public/js/patient_validation.js",
+    "Sample Collection": "public/js/patient_validation.js",
+    "Therapy Plan": "public/js/patient_validation.js",
+    "Therapy Session": "public/js/patient_validation.js",
+    "Patient Assessment": "public/js/patient_validation.js",
+    "Inpatient Record": "public/js/patient_validation.js",
 }
 
 # Home Pages
@@ -158,7 +166,8 @@ doc_events = {
 # 	"frappe.desk.doctype.event.event.get_events": "healthcare_localization.event.get_events"
 # }
 override_whitelisted_methods = {
-	"erpnext.healthcare.doctype.patient_appointment.patient_appointment.make_encounter": "healthcare_localization.override.patient_appointment.make_encounter"
+	"erpnext.healthcare.doctype.patient_appointment.patient_appointment.make_encounter": "healthcare_localization.override.patient_appointment.make_encounter",
+  "erpnext.healthcare.doctype.patient.patient.get_patient_detail": "healthcare_localization.override.patient.get_patient_detail",
 }
 
 #

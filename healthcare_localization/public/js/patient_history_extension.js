@@ -28,7 +28,7 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
       successMessage: "Información ginecoobstetra actualizado correctamente."
     }
   };
-  
+
   function initializePatientHistoryButtons($main_section) {
     if (!$main_section.find('.my-custom-buttons').length) {
       const $btn_group = $(`
@@ -38,59 +38,83 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
           <button class="btn btn-sm btn-secondary" data-history-type="gynecological">Información Ginecoobstetra</button>
         </div>
       `);
-  
+
       $main_section.prepend($btn_group);
-  
-      $main_section.on('click', '[data-history-type]', function() {
+
+      $main_section.on('click', '[data-history-type]', function () {
         const historyType = $(this).data('history-type');
         const config = historyConfig[historyType];
-        
+
         if (config) {
           openPatientHistoryDialog(config);
         }
       });
-  
+
       setupPatientChangeListener($main_section);
     }
   }
-  
+
   function setupPatientChangeListener($main_section) {
+    let allergiesShown = false;
+
     function toggleButtons() {
+      if (frappe.get_route()[0] !== "patient_history") {
+        return;
+      }
+
       const patient = $('div[data-fieldname="patient"] input').val();
       const $buttons = $main_section.find('.my-custom-buttons');
-      
+
       if (patient && patient.trim() !== '') {
         $buttons.show();
+
+        if (!allergiesShown) {
+          allergiesShown = true;
+
+          fetchLatestAllergies(patient).then(allergies => {
+            if (allergies) {
+              frappe.msgprint({
+                title: __("Atención"),
+                message: __(`El paciente tiene alergias registradas: ${allergies}`),
+                indicator: "orange"
+              });
+            }
+          });
+        }
+
       } else {
         $buttons.hide();
+        allergiesShown = false;
       }
     }
-  
-    setTimeout(toggleButtons, 100); 
-  
+
+
+
+    setTimeout(toggleButtons, 100);
+
     $(document).on('change', 'div[data-fieldname="patient"] input', toggleButtons);
-    
+
     $(document).on('input', 'div[data-fieldname="patient"] input', toggleButtons);
-    
-    $(document).on('frappe:form:set_value', function(e, fieldname, value) {
+
+    $(document).on('frappe:form:set_value', function (e, fieldname, value) {
       if (fieldname === 'patient') {
         toggleButtons();
       }
     });
-  
+
     $(document).on('change', 'input[data-fieldname="patient"]', toggleButtons);
-    
+
     setInterval(toggleButtons, 500);
   }
-  
+
   function openPatientHistoryDialog(config) {
     const patient = $('div[data-fieldname="patient"] input').val();
-    
+
     if (!patient) {
       showError('No se ha seleccionado un paciente.');
       return;
     }
-  
+
     frappe.db.get_doc('Patient', patient)
       .then(doc => {
         loadHistoryTemplate(config, doc);
@@ -100,7 +124,7 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
         console.error("Error al obtener paciente:", error);
       });
   }
-  
+
   function loadHistoryTemplate(config, patientDoc) {
     frappe.call({
       method: "healthcare_localization.healthcare_localization.utils.get_info.get_pathological_history",
@@ -113,10 +137,10 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
       }
     });
   }
-  
+
   function prepareTableData(patientDoc, detailField, templateData) {
     const existingData = patientDoc[detailField] || [];
-    
+
     if (existingData.length > 0) {
       return existingData.map(row => ({
         description: row.description,
@@ -125,7 +149,7 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
         alert: row.alert || 0
       }));
     }
-    
+
     if (templateData && templateData.length > 0) {
       return templateData.map(row => ({
         description: row.description,
@@ -134,10 +158,10 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
         alert: 0
       }));
     }
-    
+
     return [];
   }
-  
+
   function showHistoryDialog(config, patientDoc, tableData) {
     const dialog = new frappe.ui.Dialog({
       title: config.title,
@@ -168,10 +192,10 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
         savePatientHistory(config, patientDoc, values, dialog);
       }
     });
-  
+
     dialog.show();
   }
-  
+
   function getTableFields() {
     return [
       {
@@ -201,12 +225,12 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
       }
     ];
   }
-  
+
   function savePatientHistory(config, patientDoc, values, dialog) {
     // Actualizar el documento del paciente
     patientDoc[config.fieldname] = config.template;
     patientDoc[config.detailField] = [];
-  
+
     const detailData = values[config.detailField] || [];
     detailData.forEach(row => {
       patientDoc[config.detailField].push({
@@ -220,7 +244,7 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
         alert: row.alert
       });
     });
-  
+
     // Guardar el documento
     frappe.call({
       method: 'frappe.client.save',
@@ -238,7 +262,7 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
       }
     });
   }
-  
+
   function showError(message) {
     frappe.msgprint({
       title: __('Error'),
@@ -246,4 +270,29 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
       indicator: 'red'
     });
   }
+
+  function fetchLatestAllergies(patient) {
+    return frappe.call({
+      method: "frappe.client.get_list",
+      args: {
+        doctype: "Patient Encounter",
+        filters: {
+          patient: patient
+        },
+        fields: ["name", "encounter_date", "hco_allergies"],
+        order_by: "encounter_date desc",
+        limit_page_length: 20
+      }
+    }).then(r => {
+      if (!r.message || r.message.length === 0) return "";
+
+      for (let enc of r.message) {
+        if (enc.hco_allergies && enc.hco_allergies.trim() !== "") {
+          return enc.hco_allergies;
+        }
+      }
+      return "";
+    });
+  }
+
 };

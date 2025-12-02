@@ -26,7 +26,7 @@ def handle(sales_invoice):
 
     user_list.append(users_json)
 
-    transaction_node["Usuarios"] = user_list    
+    transaction_node["usuarios"] = user_list    
     
 
     # ---------------------------------------------------------------------------------
@@ -163,6 +163,15 @@ def get_users_info(sales_invoice, idx):
     if not iso_birth_country:
         sales_invoices_exception.hco_iso_birth_country_exception()
 
+    residence_municipality = patient_doc.hco_residence_municipality
+    cod_municipio_residencia = None
+
+    if residence_municipality:
+        municipality_doc = frappe.get_doc("qp_CO_Municipality", residence_municipality)
+        if municipality_doc and municipality_doc.state_code:
+            state_doc = frappe.get_doc("qp_CO_State", municipality_doc.state_code)
+            if state_doc:
+                cod_municipio_residencia = f"{state_doc.state_id}{municipality_doc.municipality_id}"
     incap_paciente = get_incapacidad(sales_invoice.get("items", []))
 
     res = {}
@@ -173,13 +182,13 @@ def get_users_info(sales_invoice, idx):
     res["fechaNacimiento"] = "{}".format(patient_doc.dob)
     res["codSexo"] = hco_code
     res["codPaisResidencia"] = iso_residence_country
-    res["codMunicipioResidencia"] = patient_doc.hco_residence_municipality or None
+    res["codMunicipioResidencia"] = cod_municipio_residencia
     res["codZonaTerritorialResidencia"] = patient_doc.hco_territorial_zone or None
     res["incapacidad"] = incap_paciente
     res["codPaisOrigen"] = iso_birth_country
     res["consecutivo"] = idx
 
-    res["Servicios"] = get_servicios(sales_invoice)
+    res["servicios"] = get_servicios(sales_invoice)
 
     return res
 
@@ -234,12 +243,12 @@ def get_servicios(sales_invoice):
     res_servicios = {}
 
     res_servicios["consultas"] = get_consultas(sales_invoice)
+    #res_servicios["urgencias"] = get_urgencias(sales_invoice) # No Aplica
+    #res_servicios["procedimientos"] = get_procedimientos(sales_invoice)
+    #res_servicios["hospitalizacion"] = get_hospitalizacion(sales_invoice)
+    #res_servicios["recienNacidos"] = get_recien_nacidos(sales_invoice) # No Aplica
     res_servicios["medicamentos"] = get_medicamentos(sales_invoice)
-    res_servicios["procedimientos"] = get_procedimientos(sales_invoice)
-    # res_servicios["urgencias"] = get_urgencias(sales_invoice) # No Aplica
-    res_servicios["hospitalizacion"] = get_hospitalizacion(sales_invoice)
-    # res_servicios["recienNacidos"] = get_recien_nacidos(sales_invoice) # No Aplica
-    res_servicios["otrosServicios"] = get_otros_servicios(sales_invoice)
+    #res_servicios["otrosServicios"] = get_otros_servicios(sales_invoice)
 
     return res_servicios
 
@@ -323,7 +332,7 @@ def get_consultas(sales_invoice):
         inf_cons = {}
 
         inf_cons["codPrestador"] = cod_prestador
-        inf_cons["fechaInicioAtencion"] = "{}".format(encounter_doc.encounter_date)
+        inf_cons["fechaInicioAtencion"] = get_encounter_datetime(encounter_doc)
         inf_cons["numAutorizacion"] = encounter_doc.hco_authorization_number
         inf_cons["codConsulta"] = get_codConsulta(encounter_doc.codification_table)
         inf_cons["modalidadGrupoServicioTecSal"] = encounter_doc.hco_mode or None
@@ -335,22 +344,20 @@ def get_consultas(sales_invoice):
             encounter_doc.hco_purpose_of_health_tech or None
         )
         inf_cons["causaMotivoAtencion"] = encounter_doc.hco_cause_of_attention or None
-        inf_cons["codDiagnosticoPrincipal"] = (
-            ppal_diagnosis or None
-        )
+        inf_cons["codDiagnosticoPrincipal"] = get_diagnosis_code(ppal_diagnosis) if ppal_diagnosis else None
         inf_cons["codDiagnosticoRelacionado1"] = (
-            len(rel_diagnosis) > 0 and rel_diagnosis[0] or None
+            len(rel_diagnosis) > 0 and get_diagnosis_code(rel_diagnosis[0]) or None
         )
         inf_cons["codDiagnosticoRelacionado2"] = (
-            len(rel_diagnosis) > 1 and rel_diagnosis[1] or None
+            len(rel_diagnosis) > 1 and get_diagnosis_code(rel_diagnosis[1]) or None
         )
         inf_cons["codDiagnosticoRelacionado3"] = (
-            len(rel_diagnosis) > 2 and rel_diagnosis[2] or None
+            len(rel_diagnosis) > 2 and get_diagnosis_code(rel_diagnosis[2]) or None
         )
-        inf_cons["typoDiagnosticoPrincipal"] = encounter_doc.hco_diagnosis_type
+        inf_cons["tipoDiagnosticoPrincipal"] = encounter_doc.hco_diagnosis_type
         inf_cons["tipoDocumentoIdentificacion"] = patient_doc.eico_nvben_tdoc or None
         inf_cons["numDocumentoIdentificacion"] = patient_doc.eico_nvben_ndoc or None
-        inf_cons["vrServicio"] = item.net_amount
+        inf_cons["vrServicio"] = 0
         # conceptoRecaudo es obligatorio en la Documentación y no se encuentra en el excel
         # 02:Cuota moderadora
         # 03:Pagos compartidos en planes voluntarios de salud
@@ -485,7 +492,8 @@ def get_medicamentos(sales_invoice):
         tipoDocumentoIdentificacion = patient_doc.eico_nvben_tdoc
 
         numDocumentoIdentificacion = patient_doc.eico_nvben_ndoc
-        idx = 0
+
+        idx = 1
 
         for item in sales_invoice.get("items", []):
             encounter_doc = None
@@ -495,7 +503,11 @@ def get_medicamentos(sales_invoice):
                 encounter_doc = get_encounter_doc(reference_dt, reference_dn)
             else:
                 continue
-            
+            ppal_diagnosis = encounter_doc.hco_diagnosis
+            if not ppal_diagnosis:
+                sales_invoices_exception.patient_encounter_empty_field_exception(
+                    "Diagnosis"
+                )
             rel_diagnosis = [x.diagnosis for x in encounter_doc.hco_related_diagnosis]
             drugs_prescriptions = get_drugs_prescriptions(encounter_doc)
             for prescription in drugs_prescriptions:
@@ -503,31 +515,10 @@ def get_medicamentos(sales_invoice):
                 drug_info = get_drug_info(prescription.drug_code)
                 inf_med["codPrestador"] = cod_prestador
                 inf_med["numAutorizacion"] = numAutorizacion
-                inf_med["idMIPRES"] = None # Medicamento no financiado por presupuesto máximo 
-                if encounter_doc.encounter_date and encounter_doc.encounter_time:
-                    if isinstance(encounter_doc.encounter_time, timedelta):
-                        dummy_datetime_today = datetime.combine(date.today(), time.min)
-                        actual_time = (dummy_datetime_today + encounter_doc.encounter_time).time()
-                    elif isinstance(encounter_doc.encounter_time, time):
-                        actual_time = encounter_doc.encounter_time
-                    else:
-                        actual_time = None 
-
-                    if actual_time:
-                        combined_datetime = datetime.combine(
-                            encounter_doc.encounter_date,
-                            actual_time
-                        )
-                        inf_med["fechaDispensAdmon"] = combined_datetime.strftime("%Y-%m-%d %H:%M")
-                    else:
-                        inf_med["fechaDispensAdmon"] = encounter_doc.encounter_date.strftime("%Y-%m-%d") if encounter_doc.encounter_date else ""
-
-                elif encounter_doc.encounter_date:
-                    inf_med["fechaDispensAdmon"] = encounter_doc.encounter_date.strftime("%Y-%m-%d")
-                else:
-                    inf_med["fechaDispensAdmon"] = ""
-                inf_med["codDiagnosticoPrincipal"] = encounter_doc.hco_diagnosis or ""
-                inf_med["codDiagnosticoRelacionado"] =  rel_diagnosis[0] if rel_diagnosis else None
+                inf_med["idMIPRES"] = None # Medicamento no financiado por presupuesto máximo
+                inf_med["fechaDispensAdmon"] = get_encounter_datetime(encounter_doc) 
+                inf_med["codDiagnosticoPrincipal"] = get_diagnosis_code(ppal_diagnosis) if ppal_diagnosis else None
+                inf_med["codDiagnosticoRelacionado"] =  (len(rel_diagnosis) > 0 and get_diagnosis_code(rel_diagnosis[0]) or None)
                 inf_med["tipoMedicamento"] = drug_info.hco_type_of_medication or ""
                 inf_med["codTecnologiaSalud"] = prescription.drug_code or ""
                 inf_med["nomTecnologiaSalud"] = prescription.drug_name or ""
@@ -535,22 +526,24 @@ def get_medicamentos(sales_invoice):
                 Corresponde a la concentración del medicamento y unidad de medida, solo aplica para medicamentos de tipo Preparación Magistral
                 Si el medicamento no es de tipo Preparación Magistral, se debe registrar el valor None
                 """
-                inf_med["concentracionMedicamento"] = None 
-                inf_med["unidadMedida"] = None
+                inf_med["concentracionMedicamento"] = 0 
+                inf_med["unidadMedida"] = 0
                 inf_med["formaFarmaceutica"] = drug_info.hco_pharmaceutical_form or ""
-                inf_med["unidadMinDispensa"] = drug_info.hco_minimum_dispensing_unit
-                inf_med["cantidadMedicamento"] = prescription.hco_quantity or 0
-                inf_med["diasTratamiento"] = prescription.hco_interval or 0
+                inf_med["unidadMinDispensa"] = drug_info.hco_minimum_dispensing_unit or 0
+                inf_med["cantidadMedicamento"] = int(prescription.hco_quantity) or 0
+                inf_med["diasTratamiento"] = int(prescription.hco_interval) or 0
                 '''
                 - 1: Si modalidad de pago es pago por eventos
                 - 0: Para las demás modalidades de 
                 '''
+                inf_med["tipoDocumentoIdentificacion"] = tipoDocumentoIdentificacion or ""
+                inf_med["numDocumentoIdentificacion"] = numDocumentoIdentificacion or ""
                 inf_med["vrUnitMedicamento"] = 0    
                 inf_med["vrServicio"] = 0  # Se asume que la modalidad de pago no es pago por eventos
                 inf_med["conceptoRecaudo"] = "05"  # No aplica
                 inf_med["valorPagoModerador"] = 0  # No aplica
                 inf_med["numFEVPagoModerador"] = None  # No aplica
-
+                inf_med["consecutivo"] = idx
                 idx += 1
             
                 res_medicamentos.append(inf_med)
@@ -600,6 +593,39 @@ def get_procedimientos(sales_invoice):
 
     return res_procedimientos
 
+def get_encounter_datetime(encounter_doc):
+    encounter_date_time = None
+    if encounter_doc.encounter_date and encounter_doc.encounter_time:
+        if isinstance(encounter_doc.encounter_time, timedelta):
+            dummy_datetime_today = datetime.combine(date.today(), time.min)
+            actual_time = (dummy_datetime_today + encounter_doc.encounter_time).time()
+        elif isinstance(encounter_doc.encounter_time, time):
+            actual_time = encounter_doc.encounter_time
+        else:
+            actual_time = None 
+
+        if actual_time:
+            combined_datetime = datetime.combine(
+                encounter_doc.encounter_date,
+                actual_time
+            )
+            encounter_date_time = combined_datetime.strftime("%Y-%m-%d %H:%M")
+        else:
+            encounter_date_time = encounter_doc.encounter_date.strftime("%Y-%m-%d") if encounter_doc.encounter_date else ""
+
+    elif encounter_doc.encounter_date:
+        encounter_date_time = encounter_doc.encounter_date.strftime("%Y-%m-%d")
+    else:
+        encounter_date_time = ""
+
+    return encounter_date_time
+
+
+def get_diagnosis_code(diagnosis):
+    diagnosis_code = frappe.db.get_value("Diagnosis", diagnosis, "code")
+    if not diagnosis_code:
+        sales_invoices_exception.diagnosis_code_not_found_exception(diagnosis)
+    return diagnosis_code
 
 def get_urgencias(sales_invoice):
     res_urgencias = []

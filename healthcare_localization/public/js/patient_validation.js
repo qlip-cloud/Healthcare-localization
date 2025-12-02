@@ -1,25 +1,5 @@
-frappe.ui.form.on("Patient Appointment", "onload", function(frm) {
-    frm.set_query("department", function() {
-        return {
-            filters:{
-                'hco_service_code': ['!=', '']
-            }
-        }
-    });
-    frm.set_query("hco_medical_code", function() {
-        return {
-            filters: {
-                'department': frm.doc.department || '',
-                'appointment_type': frm.doc.appointment_type || '',
-            }
-        }
-    });
-});
-
-
-// Validación para paciente inactivo (hco_patient_status != "Active")
-frappe.ui.form.on('Patient Appointment', {
-     setup: function(frm) {
+frappe.ui.form.on(cur_frm.doctype, {
+    setup: function(frm) {
         if (!frm.original_read_only_state) {
             frm.original_read_only_state = {};
             Object.keys(frm.fields_dict).forEach(function (fieldname) {
