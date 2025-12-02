@@ -373,16 +373,6 @@ frappe.ui.form.on('Patient Encounter', {
         if(frm.doc.hco_no_referral){
             frm.set_value('hco_referral', 0);
         }
-    },
-    hco_support_certificate: function (frm) {
-        if(frm.doc.hco_support_certificate){
-            frm.set_value('hco_emotional_support_animal', 0);
-        }
-    },
-    hco_emotional_support_animal: function (frm) {
-        if(frm.doc.hco_emotional_support_animal){
-            frm.set_value('hco_support_certificate', 0);
-        }
     }
 });
 
@@ -407,9 +397,7 @@ frappe.ui.form.on("Patient Encounter", {
             hco_other_exam_detail: { min: 0, max: 100 },
             hco_referral_details: { min: 0, max: 500 },
             hco_treatment: { min: 0, max: 500 },
-            hco_general_recs: { min: 0, max: 500 },
-            hco_certificate_title: { min: 0, max: 500 },
-            hco_certificate_text: { min: 0, max: 10000 },
+            hco_general_recs: { min: 0, max: 500 }
         };
         const size_limits = {
             hco_school: 35,
@@ -470,38 +458,6 @@ frappe.ui.form.on("Patient Encounter", {
     }
 });
 
-
-// Reordenar sección Nuevo Certificado
-frappe.ui.form.on('Patient Encounter', {
-    refresh: function (frm) {
-        let col1_wrapper = frm.fields_dict['html_label_certificates'].wrapper.closest('.form-column');
-        let col2_wrapper = frm.fields_dict['hmtl_certificates_blank'].wrapper.closest('.form-column');
-        let col3_wrapper = frm.fields_dict['hco_certificate_title'].wrapper.closest('.form-column');
-        let certificate_title_container = frm.fields_dict['hco_certificate_title'].wrapper;
-        let certificate_text_wrapper = frm.fields_dict['hco_certificate_text'].wrapper
-        if (col1_wrapper && col2_wrapper && col3_wrapper) {
-            $(col1_wrapper).removeClass('col-md-4').addClass('col-md-6');
-            $(col2_wrapper).removeClass('col-md-4').addClass('col-md-6');
-            $(col3_wrapper).removeClass('col-md-4').addClass('col-md-12');
-            $(col3_wrapper).css({
-                'margin-top': '10px',
-                'margin-bottom': '10px'
-            });
-        }
-        if (certificate_text_wrapper) {
-            $(certificate_text_wrapper).css({
-                'margin-top': '10px',
-                'margin-bottom': '10px'
-            });
-        }
-        if (certificate_title_container) {
-            $(certificate_title_container).css({
-                'margin-top': '10px',
-                'margin-bottom': '10px'
-            });
-        }
-    }
-});
 // Función modificar tamaño visual de campos
 
 function modify_field_size(frm, fieldname, size) {

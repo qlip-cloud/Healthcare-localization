@@ -1,4 +1,3 @@
-from email.mime import message
 import frappe
 from frappe import _
 
@@ -11,15 +10,23 @@ def get_patient_detail(patient):
   details = patient_dict[0]
   if vital_sign:
       details.update(vital_sign[0])
-  last_encounter = frappe.db.sql("""SELECT hco_allergies FROM `tabPatient Encounter` WHERE patient = %s AND docstatus = 1 ORDER BY encounter_date DESC LIMIT 1""",(patient,),as_dict=1)
-  if last_encounter:
-      details['allergies'] = last_encounter[0]['hco_allergies']
-  else:
-      details['allergies'] = ''
-  if details['allergies']:
-      frappe.msgprint(title= _("Atención"),msg= _(f'El paciente tiene alergias registradas: {details["allergies"]}'),indicator= "orange");
-  return details
-  
-  
 
+  if not details.get("allergies"):
+      last_encounter = frappe.db.sql(
+          """
+          SELECT hco_allergies 
+          FROM `tabPatient Encounter`
+          WHERE patient = %s
+          AND docstatus = 1
+          ORDER BY encounter_date DESC
+          LIMIT 1
+          """,
+          (patient,),
+          as_dict=1
+          )
+      
+      if last_encounter and last_encounter[0].get("hco_allergies"):
+          details["allergies"] = last_encounter[0]["hco_allergies"]
+              
+  return details
                                         
