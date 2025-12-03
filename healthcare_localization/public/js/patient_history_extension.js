@@ -67,6 +67,18 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
 
       if (patient && patient.trim() !== '') {
         $buttons.show();
+        if (!allergiesShown) {
+          fetchLatestAllergies(patient).then(allergies => {
+            if (allergies && allergies.trim() !== "") {
+              frappe.msgprint({
+                title: __('Atención'),
+                message:  __(`El paciente tiene alergias registradas: ${allergies}`),
+                indicator: 'orange'
+              });
+            }
+            allergiesShown = true;
+          });
+        }
 
         if (!allergiesShown) {
           allergiesShown = true;
@@ -268,6 +280,29 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
       title: __('Error'),
       message: __(message),
       indicator: 'red'
+    });
+  }
+    function fetchLatestAllergies(patient) {
+    return frappe.call({
+      method: "frappe.client.get_list",
+      args: {
+        doctype: "Patient Encounter",
+        filters: {
+          patient: patient
+        },
+        fields: ["name", "encounter_date", "hco_allergies"],
+        order_by: "encounter_date desc",
+        limit_page_length: 20
+      }
+    }).then(r => {
+      if (!r.message || r.message.length === 0) return "";
+
+      for (let enc of r.message) {
+        if (enc.hco_allergies && enc.hco_allergies.trim() !== "") {
+          return enc.hco_allergies;
+        }
+      }
+      return "";
     });
   }
 
