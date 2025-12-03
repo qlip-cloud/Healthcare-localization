@@ -55,7 +55,6 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
   }
 
   function setupPatientChangeListener($main_section) {
-    let allergiesShown = false;
 
     function toggleButtons() {
       if (frappe.get_route()[0] !== "patient_history") {
@@ -80,23 +79,9 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
           });
         }
 
-        if (!allergiesShown) {
-          allergiesShown = true;
-
-          fetchLatestAllergies(patient).then(allergies => {
-            if (allergies) {
-              frappe.msgprint({
-                title: __("Atención"),
-                message: __(`El paciente tiene alergias registradas: ${allergies}`),
-                indicator: "orange"
-              });
-            }
-          });
-        }
-
       } else {
         $buttons.hide();
-        allergiesShown = false;
+  
       }
     }
 
@@ -283,30 +268,6 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
     });
   }
     function fetchLatestAllergies(patient) {
-    return frappe.call({
-      method: "frappe.client.get_list",
-      args: {
-        doctype: "Patient Encounter",
-        filters: {
-          patient: patient
-        },
-        fields: ["name", "encounter_date", "hco_allergies"],
-        order_by: "encounter_date desc",
-        limit_page_length: 20
-      }
-    }).then(r => {
-      if (!r.message || r.message.length === 0) return "";
-
-      for (let enc of r.message) {
-        if (enc.hco_allergies && enc.hco_allergies.trim() !== "") {
-          return enc.hco_allergies;
-        }
-      }
-      return "";
-    });
-  }
-
-  function fetchLatestAllergies(patient) {
     return frappe.call({
       method: "frappe.client.get_list",
       args: {
