@@ -16,8 +16,6 @@ def get_patient_detail(patient):
       details['allergies'] = last_encounter[0]['hco_allergies']
   else:
       details['allergies'] = ''
-  if details['allergies']:
-      frappe.msgprint(title= _("Atención"),msg= _(f'El paciente tiene alergias registradas: {details["allergies"]}'),indicator= "orange");
   return details
   
   
