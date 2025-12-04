@@ -12,6 +12,7 @@ def get_patient_detail(patient):
   if vital_sign:
       details.update(vital_sign[0])
   last_encounter = frappe.db.sql("""SELECT hco_allergies FROM `tabPatient Encounter` WHERE patient = %s AND docstatus = 1 ORDER BY encounter_date DESC LIMIT 1""",(patient,),as_dict=1)
+  # Usar alergias del último encuentro registrado
   if last_encounter:
       details['allergies'] = last_encounter[0]['hco_allergies']
   else:
