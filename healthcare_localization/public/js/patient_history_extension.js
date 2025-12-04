@@ -55,8 +55,6 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
   }
 
   function setupPatientChangeListener($main_section) {
-    let allergiesShown = false;
-
     function toggleButtons() {
       if (frappe.get_route()[0] !== "patient_history") {
         return;
@@ -67,18 +65,6 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
 
       if (patient && patient.trim() !== '') {
         $buttons.show();
-        if (!allergiesShown) {
-          fetchLatestAllergies(patient).then(allergies => {
-            if (allergies && allergies.trim() !== "") {
-              frappe.msgprint({
-                title: __('Atención'),
-                message:  __(`El paciente tiene alergias registradas: ${allergies}`),
-                indicator: 'orange'
-              });
-            }
-            allergiesShown = true;
-          });
-        }
 
         if (!allergiesShown) {
           allergiesShown = true;
@@ -96,7 +82,7 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
 
       } else {
         $buttons.hide();
-        allergiesShown = false;
+  
       }
     }
 
@@ -197,7 +183,7 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
           in_place_edit: true,
           data: tableData,
           fields: getTableFields()
-        }
+        } 
       ],
       primary_action_label: 'Guardar',
       primary_action(values) {
@@ -282,7 +268,7 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
       indicator: 'red'
     });
   }
-    function fetchLatestAllergies(patient) {
+  function fetchLatestAllergies(patient) {
     return frappe.call({
       method: "frappe.client.get_list",
       args: {
@@ -304,6 +290,21 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
       }
       return "";
     });
+  }
+  const original_show_patient_info = show_patient_info;
+
+  show_patient_info = function(patient_id, me) {
+      original_show_patient_info(patient_id, me);
+      fetchLatestAllergies(patient_id).then(allergies => {
+            if (allergies && allergies.trim() !== "") {
+              frappe.msgprint({
+                title: __('Atención'),
+                message:  __(`El paciente tiene alergias registradas: ${allergies}`),
+                indicator: 'orange'
+              });
+            }
+      });
+
   }
 
   function fetchLatestAllergies(patient) {
