@@ -4,20 +4,48 @@ from frappe import _
 
 @frappe.whitelist()
 def get_patient_detail(patient):
-  patient_dict = frappe.db.sql("""select * from `tabPatient` where name=%s""", (patient,), as_dict=1)
-          
-  vital_sign = frappe.db.sql("""select * from `tabVital Signs` where patient=%s order by signs_date desc limit 1""", (patient,), as_dict=1)
+    patient_dict = frappe.db.sql(
+        """SELECT * FROM `tabPatient` WHERE name=%s""",
+        (patient,),
+        as_dict=1
+    )
 
-  details = patient_dict[0]
-  if vital_sign:
-      details.update(vital_sign[0])
-  last_encounter = frappe.db.sql("""SELECT hco_allergies FROM `tabPatient Encounter` WHERE patient = %s AND docstatus = 1 ORDER BY encounter_date DESC LIMIT 1""",(patient,),as_dict=1)
-  # Usar alergias del último encuentro registrado
-  if last_encounter:
-      details['allergies'] = last_encounter[0]['hco_allergies']
-  else:
-      details['allergies'] = ''
-  return details
-  
+    vital_sign = frappe.db.sql(
+        """SELECT * FROM `tabVital Signs` 
+           WHERE patient=%s 
+           ORDER BY signs_date DESC LIMIT 1""",
+        (patient,),
+        as_dict=1
+    )
+
+    details = patient_dict[0]
+    if vital_sign:
+        details.update(vital_sign[0])
+
+    encounters = frappe.db.sql(
+        """SELECT hco_allergies 
+           FROM `tabPatient Encounter`
+           WHERE patient=%s AND docstatus = 1
+           ORDER BY encounter_date DESC""",
+        (patient,),
+        as_dict=1
+    )
+
+    allergy_lines = []
+
+    for enc in encounters:
+        if enc.get("hco_allergies"):
+            lines = enc["hco_allergies"].split("\n")
+            cleaned = [l.strip() for l in lines if l.strip()]
+            allergy_lines.extend(cleaned)
+
+    unique_allergies = sorted(set(allergy_lines))
+
+    allergies_str = ", ".join(unique_allergies)
+
+    details["allergies"] = allergies_str
+
+    return details
+
 
                                         
