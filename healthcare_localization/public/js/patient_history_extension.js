@@ -254,34 +254,43 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
       indicator: 'red'
     });
   }
-  function fetchLatestAllergies(patient) {
+  function fetchAllAllergies(patient) {
     return frappe.call({
       method: "frappe.client.get_list",
       args: {
         doctype: "Patient Encounter",
-        filters: {
-          patient: patient
-        },
-        fields: ["name", "encounter_date", "hco_allergies"],
+        filters: { patient: patient },
+        fields: ["hco_allergies"],
         order_by: "encounter_date desc",
-        limit_page_length: 20
+        limit_page_length: 200
       }
     }).then(r => {
       if (!r.message || r.message.length === 0) return "";
 
+      let allLines = [];
+
       for (let enc of r.message) {
-        if (enc.hco_allergies && enc.hco_allergies.trim() !== "") {
-          return enc.hco_allergies;
+        if (enc.hco_allergies) {
+          let lines = enc.hco_allergies
+            .split("\n")
+            .map(l => l.trim())
+            .filter(l => l !== "");
+
+          allLines.push(...lines);
         }
       }
-      return "";
+
+      let unique = [...new Set(allLines)].sort();
+
+      return unique.join(", ");
     });
   }
+
   const original_show_patient_info = show_patient_info;
 
   show_patient_info = function(patient_id, me) {
       original_show_patient_info(patient_id, me);
-      fetchLatestAllergies(patient_id).then(allergies => {
+      fetchAllAllergies(patient_id).then(allergies => {
             if (allergies && allergies.trim() !== "") {
               frappe.msgprint({
                 title: __('Atención'),
