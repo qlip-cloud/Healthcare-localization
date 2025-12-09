@@ -271,7 +271,6 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
 
       for (let enc of r.message) {
         if (enc.hco_allergies) {
-          console.log(enc.hco_allergies);
           let lines = enc.hco_allergies
             .split("\n")
             .map(l => l.trim())
