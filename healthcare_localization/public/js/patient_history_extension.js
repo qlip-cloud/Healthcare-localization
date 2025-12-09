@@ -259,7 +259,7 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
       method: "frappe.client.get_list",
       args: {
         doctype: "Patient Encounter",
-        filters: { patient: patient },
+        filters: { patient: patient, docstatus: 1 },
         fields: ["hco_allergies"],
         order_by: "encounter_date desc",
         limit_page_length: 200
