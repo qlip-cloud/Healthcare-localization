@@ -2,8 +2,12 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('qp_HCO_MedicalHistoryPrintLog', {
-	refresh: function(frm) {
-		frm.page.btn_print.hide();
-		console.log("Print function disabled for qp_HCO_MedicalHistoryPrintLog");
-	}
+    refresh(frm) {
+        setTimeout(() => {
+            frm.page.wrapper
+                .find('button.icon-btn use[href="#icon-printer"]')
+                .closest('button')
+                .hide();
+        }, 0);
+    }
 });
