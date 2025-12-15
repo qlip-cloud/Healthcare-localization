@@ -1,4 +1,6 @@
 frappe.pages['patient_history'].on_page_show = function (wrapper) {
+
+  // Botones para editar historiales específicos
   const $wrapper = $(wrapper);
   const $main_section = $wrapper.find('.patient_documents');
 
@@ -286,6 +288,7 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
     });
   }
 
+  // Extender la función show_patient_info para incluir la verificación de alergias
   const original_show_patient_info = show_patient_info;
 
   show_patient_info = function(patient_id, me) {
@@ -302,4 +305,118 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
 
   }
 
+  // Agregar opción de impresión de historial completo
+  const page = wrapper.page;
+  if (page) {
+    let $btn = page.set_secondary_action('Imprimir', () => createPrintLog(), 'printer');
+  }
+
+  // Creación del registro de impresión
+  const createPrintLog = () => {
+    let d = new frappe.ui.Dialog({
+      title: 'Registro de Impresión',
+      fields: [
+      {
+        label: 'Usuario',
+        fieldname: 'user',
+        fieldtype: 'Data',
+        reqd: 1
+      },
+      {
+        label: 'Fecha',
+        fieldname: 'print_date',
+        fieldtype: 'Date',
+        reqd: 1,
+        read_only: 1,
+        default: frappe.datetime.get_today()
+      },
+      {
+        label: 'Motivo de Impresión',
+        fieldname: 'print_reason',
+        fieldtype: 'Small Text',
+        reqd: 1,
+        description: 'Mínimo 20 caracteres, máximo 5000 caracteres'
+      },
+      {
+        label: 'Observaciones',
+        fieldname: 'observations',
+        fieldtype: 'Text',
+        reqd: 0,
+        description: 'Máximo 5000 caracteres'
+      }
+      ],
+      primary_action_label: 'Registrar',
+      primary_action(values) {
+        const patient = $('div[data-fieldname="patient"] input').val();
+        if (!patient) {
+          frappe.throw('No se ha seleccionado un paciente.');
+          return;
+        }
+
+        // Validar longitud de print_reason
+        if (values.print_reason && values.print_reason.length < 20) {
+          frappe.msgprint({
+            title: __('Validación'),
+            message: __('El motivo de impresión debe tener al menos 20 caracteres.'),
+            indicator: 'red'
+          });
+          return;
+        }
+
+        if (values.print_reason && values.print_reason.length > 5000) {
+          frappe.msgprint({
+            title: __('Validación'),
+            message: __('El motivo de impresión no puede exceder los 5000 caracteres.'),
+            indicator: 'red'
+          });
+          return;
+        }
+
+        // Validar longitud de observations
+        if (values.observations && values.observations.length > 5000) {
+          frappe.msgprint({
+            title: __('Validación'),
+            message: __('Las observaciones no pueden exceder los 5000 caracteres.'),
+            indicator: 'red'
+          });
+          return;
+        }
+
+        frappe.call({
+          method: 'frappe.client.insert',
+          args: {
+            doc: {
+              doctype: 'qp_HCO_MedicalHistoryPrintLog',
+              user: values.user,
+              print_date: values.print_date,
+              print_reason: values.print_reason,
+              observations: values.observations,
+              patient: patient
+            }
+          },
+          callback: function(r) {
+            if (!r.exc) {
+              frappe.msgprint({
+                title: __('Éxito'),
+                message: __('Registro de impresión creado correctamente.'),
+                indicator: 'green',
+                primary_action: {
+                  label: 'Imprimir Historial',
+                  action: function() {
+                    window.open(`/printview?doctype=qp_HCO_MedicalHistoryPrintLog&name=${r.message.name}&format=Patient History&trigger_print=1`, '_blank');
+                  }
+                }
+              });
+              d.hide();
+            } else {
+              frappe.throw('Ocurrió un error al crear el registro de impresión.');
+              console.error(r.exc);
+            }
+          }
+        });
+      }
+    });
+
+    d.show();
+  }
 };
