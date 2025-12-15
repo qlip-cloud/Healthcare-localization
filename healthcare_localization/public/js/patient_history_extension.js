@@ -349,7 +349,11 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
       primary_action(values) {
         const patient = $('div[data-fieldname="patient"] input').val();
         if (!patient) {
-          frappe.throw('No se ha seleccionado un paciente.');
+          frappe.msgprint({
+            title: __('Error'),
+            message: __('No se ha seleccionado un paciente.'),
+            indicator: 'red'
+          });
           return;
         }
 
@@ -396,20 +400,17 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
           },
           callback: function(r) {
             if (!r.exc) {
-              frappe.msgprint({
-                title: __('Éxito'),
-                message: __('Registro de impresión creado correctamente.'),
-                indicator: 'green',
-                primary_action: {
-                  label: 'Imprimir Historial',
-                  action: function() {
-                    window.open(`/printview?doctype=qp_HCO_MedicalHistoryPrintLog&name=${r.message.name}&format=Patient History&trigger_print=1`, '_blank');
-                  }
-                }
-              });
               d.hide();
+              frappe.show_alert({
+                message: __('Registro de impresión creado correctamente.')
+              });
+              window.open(`print/qp_HCO_MedicalHistoryPrintLog/${r.message.name}`, '_blank');
             } else {
-              frappe.throw('Ocurrió un error al crear el registro de impresión.');
+              frappe.msgprint({
+                title: __('Error'),
+                message: __('Ocurrió un error al crear el registro de impresión.'),
+                indicator: 'red'
+              });
               console.error(r.exc);
             }
           }
