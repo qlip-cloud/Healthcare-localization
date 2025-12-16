@@ -1,0 +1,32 @@
+{
+ "custom_fields": [],
+ "custom_perms": [],
+ "doctype": "qp_HCO_MedicalHistoryPrintLog",
+ "property_setters": [
+  {
+   "_assign": null,
+   "_comments": null,
+   "_liked_by": null,
+   "_user_tags": null,
+   "creation": "2025-12-15 16:10:00.624355",
+   "default_value": null,
+   "doc_type": "qp_HCO_MedicalHistoryPrintLog",
+   "docstatus": 0,
+   "doctype_or_field": "DocType",
+   "field_name": null,
+   "idx": 0,
+   "modified": "2025-12-15 16:10:00.624355",
+   "modified_by": "Administrator",
+   "name": "qp_HCO_MedicalHistoryPrintLog-main-default_print_format",
+   "owner": "Administrator",
+   "parent": null,
+   "parentfield": null,
+   "parenttype": null,
+   "property": "default_print_format",
+   "property_type": "Data",
+   "row_name": null,
+   "value": "Patient History"
+  }
+ ],
+ "sync_on_migrate": 1
+}

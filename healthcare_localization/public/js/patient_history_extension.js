@@ -1,4 +1,6 @@
 frappe.pages['patient_history'].on_page_show = function (wrapper) {
+
+  // Botones para editar historiales específicos
   const $wrapper = $(wrapper);
   const $main_section = $wrapper.find('.patient_documents');
 
@@ -55,8 +57,6 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
   }
 
   function setupPatientChangeListener($main_section) {
-    let allergiesShown = false;
-
     function toggleButtons() {
       if (frappe.get_route()[0] !== "patient_history") {
         return;
@@ -68,23 +68,9 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
       if (patient && patient.trim() !== '') {
         $buttons.show();
 
-        if (!allergiesShown) {
-          allergiesShown = true;
-
-          fetchLatestAllergies(patient).then(allergies => {
-            if (allergies) {
-              frappe.msgprint({
-                title: __("Atención"),
-                message: __(`El paciente tiene alergias registradas: ${allergies}`),
-                indicator: "orange"
-              });
-            }
-          });
-        }
-
       } else {
         $buttons.hide();
-        allergiesShown = false;
+  
       }
     }
 
@@ -185,7 +171,7 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
           in_place_edit: true,
           data: tableData,
           fields: getTableFields()
-        }
+        } 
       ],
       primary_action_label: 'Guardar',
       primary_action(values) {
@@ -270,29 +256,168 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
       indicator: 'red'
     });
   }
-
-  function fetchLatestAllergies(patient) {
+  function fetchAllAllergies(patient) {
     return frappe.call({
       method: "frappe.client.get_list",
       args: {
         doctype: "Patient Encounter",
-        filters: {
-          patient: patient
-        },
-        fields: ["name", "encounter_date", "hco_allergies"],
+        filters: { patient: patient, docstatus: 1 },
+        fields: ["hco_allergies"],
         order_by: "encounter_date desc",
-        limit_page_length: 20
+        limit_page_length: 200
       }
     }).then(r => {
       if (!r.message || r.message.length === 0) return "";
 
+      let allLines = [];
+
       for (let enc of r.message) {
-        if (enc.hco_allergies && enc.hco_allergies.trim() !== "") {
-          return enc.hco_allergies;
+        if (enc.hco_allergies) {
+          let lines = enc.hco_allergies
+            .split("\n")
+            .map(l => l.trim())
+            .filter(l => l !== "");
+
+          allLines.push(...lines);
         }
       }
-      return "";
+
+      let unique = [...new Set(allLines)].sort();
+
+      return unique.join(", ");
     });
   }
 
+  // Extender la función show_patient_info para incluir la verificación de alergias
+  const original_show_patient_info = show_patient_info;
+
+  show_patient_info = function(patient_id, me) {
+      original_show_patient_info(patient_id, me);
+      fetchAllAllergies(patient_id).then(allergies => {
+            if (allergies && allergies.trim() !== "") {
+              frappe.msgprint({
+                title: __('Atención'),
+                message:  __(`El paciente tiene alergias registradas: ${allergies}`),
+                indicator: 'orange'
+              });
+            }
+      });
+
+  }
+
+  // Agregar opción de impresión de historial completo
+  const page = wrapper.page;
+  if (page) {
+    let $btn = page.set_secondary_action('Imprimir', () => createPrintLog(), 'printer');
+  }
+
+  // Creación del registro de impresión
+  const createPrintLog = () => {
+    let d = new frappe.ui.Dialog({
+      title: 'Registro de Impresión',
+      fields: [
+      {
+        label: 'Usuario',
+        fieldname: 'user',
+        fieldtype: 'Data',
+        reqd: 1
+      },
+      {
+        label: 'Fecha',
+        fieldname: 'print_date',
+        fieldtype: 'Date',
+        reqd: 1,
+        read_only: 1,
+        default: frappe.datetime.get_today()
+      },
+      {
+        label: 'Motivo de Impresión',
+        fieldname: 'print_reason',
+        fieldtype: 'Small Text',
+        reqd: 1,
+        description: 'Mínimo 20 caracteres, máximo 5000 caracteres'
+      },
+      {
+        label: 'Observaciones',
+        fieldname: 'observations',
+        fieldtype: 'Text',
+        reqd: 0,
+        description: 'Máximo 5000 caracteres'
+      }
+      ],
+      primary_action_label: 'Registrar',
+      primary_action(values) {
+        const patient = $('div[data-fieldname="patient"] input').val();
+        if (!patient) {
+          frappe.msgprint({
+            title: __('Error'),
+            message: __('No se ha seleccionado un paciente.'),
+            indicator: 'red'
+          });
+          return;
+        }
+
+        // Validar longitud de print_reason
+        if (values.print_reason && values.print_reason.length < 20) {
+          frappe.msgprint({
+            title: __('Validación'),
+            message: __('El motivo de impresión debe tener al menos 20 caracteres.'),
+            indicator: 'red'
+          });
+          return;
+        }
+
+        if (values.print_reason && values.print_reason.length > 5000) {
+          frappe.msgprint({
+            title: __('Validación'),
+            message: __('El motivo de impresión no puede exceder los 5000 caracteres.'),
+            indicator: 'red'
+          });
+          return;
+        }
+
+        // Validar longitud de observations
+        if (values.observations && values.observations.length > 5000) {
+          frappe.msgprint({
+            title: __('Validación'),
+            message: __('Las observaciones no pueden exceder los 5000 caracteres.'),
+            indicator: 'red'
+          });
+          return;
+        }
+
+        frappe.call({
+          method: 'frappe.client.insert',
+          args: {
+            doc: {
+              doctype: 'qp_HCO_MedicalHistoryPrintLog',
+              user: values.user,
+              print_date: values.print_date,
+              print_reason: values.print_reason,
+              observations: values.observations,
+              patient: patient
+            }
+          },
+          callback: function(r) {
+            if (!r.exc) {
+              d.hide();
+              frappe.show_alert({
+                message: __('Registro de impresión creado correctamente.')
+              });
+              window.open(`print/qp_HCO_MedicalHistoryPrintLog/${r.message.name}`, '_blank');
+            } else {
+              frappe.msgprint({
+                title: __('Error'),
+                message: __('Ocurrió un error al crear el registro de impresión.'),
+                indicator: 'red'
+              });
+              console.error(r.exc);
+            }
+          }
+        });
+      }
+    });
+
+    d.show();
+  }
 };
