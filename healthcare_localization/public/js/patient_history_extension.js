@@ -320,7 +320,9 @@ frappe.pages['patient_history'].on_page_show = function (wrapper) {
         label: 'Usuario',
         fieldname: 'user',
         fieldtype: 'Data',
-        reqd: 1
+        reqd: 1,
+        read_only: 1,
+        default: frappe.session.user
       },
       {
         label: 'Fecha',
