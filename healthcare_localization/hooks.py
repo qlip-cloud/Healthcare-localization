@@ -109,7 +109,8 @@ after_migrate = "healthcare_localization.healthcare_localization.utils.add_index
 
 override_doctype_class = {
 	'Patient': 'healthcare_localization.healthcare_localization.override.patient.HealthcarePatient',
-  'Patient Encounter': 'healthcare_localization.healthcare_localization.override.patient_encounter.HealthcarePatientEncounter',
+	'Patient Appointment': 'healthcare_localization.healthcare_localization.override.patient_appointment.HealthcarePatientAppointment',
+	'Patient Encounter': 'healthcare_localization.healthcare_localization.override.patient_encounter.HealthcarePatientEncounter',
 	'Healthcare Practitioner': 'healthcare_localization.healthcare_localization.override.healthcare_practitioner.HealthcarePractitioner',
 }
 

@@ -2,6 +2,7 @@ import frappe
 from frappe.model.mapper import get_mapped_doc
 from healthcare_localization.healthcare_localization.utils.get_info import get_fields_from_patient_appointment
 
+
 @frappe.whitelist()
 def make_encounter(source_name, target_doc=None):
 
